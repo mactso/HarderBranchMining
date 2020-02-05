@@ -4,6 +4,7 @@ loaderVersion="[30,)"
 modId="hbm"
 version="${file.jarVersion}"
 displayName="Harder Branch Mining Mod"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/harder-branch-mining"
 logoFile="HBM-Logo.png"
 authors="MacTso, Lupicus"
 description='''Harder Branch Mining Mod.'''
