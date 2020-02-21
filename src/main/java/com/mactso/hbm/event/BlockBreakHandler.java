@@ -1,21 +1,30 @@
+// 1.12.2 version
 package com.mactso.hbm.event;
 
 import com.mactso.hbm.config.MyConfig;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.TieredItem;
+import net.minecraft.item.ItemPickaxe;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import com.mactso.hbm.util.Reference;
 
-@Mod.EventBusSubscriber()
+
+@Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class BlockBreakHandler {
-    @SubscribeEvent
+
+	@SubscribeEvent
     public void blockBreak(BlockEvent.BreakEvent event) {   
+ 
+    	if (event.getPlayer().isCreative()) {
+    		return;
+    	}
+    	
     	int harvestLevel = -1;
-    	int tieredHarvestLevel = -1;
-    	int helditem;
-    	double depthFactor = 0.0;
+    	// int tieredHarvestLevel = -1;
+    	// int helditem;
+    	// double depthFactor = 0.0;
     	double depthBasedExhaustionFactor = 0.0;
     	double tempExhaustionAmount = 0;
     	
@@ -30,37 +39,47 @@ public class BlockBreakHandler {
         {
         	if (MyConfig.aBooleanProportionalExhaustion) 
         	{
-        	depthBasedExhaustionFactor = depthBasedExhaustionFactor / MyConfig.ExhaustionHeight;
+        		depthBasedExhaustionFactor = depthBasedExhaustionFactor / MyConfig.ExhaustionHeight;
         	} else {
         		depthBasedExhaustionFactor = 1.0;
         	}
         } else 
         {
-        	depthBasedExhaustionFactor = 0;
+        	return;
         }
         
          
         // Two paths to getting the harvest level.  The first seemed harder to read so I'm using the second.
         // System.out.println("Block broken! Harvest Level:" + event.getPlayer().getHeldItemMainhand().getHarvestLevel(event.getState().getHarvestTool(), event.getPlayer(), event.getState()));
+        System.out.println ("Block Broken! Height=" +  MyConfig.ExhaustionHeight);
         // harvestLevel = event.getPlayer().getHeldItemMainhand().getHarvestLevel(event.getState().getHarvestTool(), event.getPlayer(), event.getState());
 
         Item item = event.getPlayer().getHeldItemMainhand().getItem();
-        if (item instanceof TieredItem) 
-        {
-        	harvestLevel = ((TieredItem) item).getTier().getHarvestLevel();
-
-        }
+  
+        String itemPickaxeMaterial = "WOOD";
         
-        if (harvestLevel <= 0)  {  // wood but also gold... and also no tool (hand, stick, etc.)
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountWoodGold * depthBasedExhaustionFactor;
-        } else if (harvestLevel == 1) {
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountStone * depthBasedExhaustionFactor;
+        if (item instanceof ItemPickaxe) 
+        {
+        	ItemPickaxe itemp = (ItemPickaxe) item;
+        	itemPickaxeMaterial = itemp.getToolMaterialName();
+        	harvestLevel = itemp.getHarvestLevel(null, "pickaxe", null, null);
+        	System.out.println ("ToolMaterialName" + itemPickaxeMaterial +"HarvestLevel : " + harvestLevel );
+        } 
+        
+        if (harvestLevel >= 3) {
+        	tempExhaustionAmount = MyConfig.ExhaustionAmountDiamond * depthBasedExhaustionFactor;
 		} else if (harvestLevel == 2) {
         	tempExhaustionAmount = MyConfig.ExhaustionAmountIron * depthBasedExhaustionFactor;
-		} else if (harvestLevel >= 3) {
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountDiamond * depthBasedExhaustionFactor;
+		} else if (harvestLevel == 1) {
+        	tempExhaustionAmount = MyConfig.ExhaustionAmountStone * depthBasedExhaustionFactor;      
+		} else if (itemPickaxeMaterial == "GOLD") {
+    		tempExhaustionAmount = MyConfig.ExhaustionAmountGold * depthBasedExhaustionFactor;
+    	} else if (harvestLevel == 0) {
+        	tempExhaustionAmount = MyConfig.ExhaustionAmountWood * depthBasedExhaustionFactor;
+		} else { // bare hands / wrong tool 
+        	tempExhaustionAmount = MyConfig.ExhaustionAmountWood * depthBasedExhaustionFactor * 1.2;
 		}
-
+        
         event.getPlayer().getFoodStats().addExhaustion((float) tempExhaustionAmount);
 
         if (MyConfig.aBooleanDebug) {
