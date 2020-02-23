@@ -2,6 +2,8 @@
 package com.mactso.hbm.config;
 
 import com.mactso.hbm.util.Reference;
+
+
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.Name;
@@ -29,12 +31,22 @@ public class MyConfig
 	@Name ( "Tool Values: mod:tool, Dim, Height, Exhaustion" )
 	public static String [] defaultTools= 
 	{	    "hbm:default,0,48,10",
-			"minecraft:wooden_pickaxe,0,48,8",
-			"minecraft:stone_pickaxe,0,48,4",
-			"minecraft:iron_pickaxe,0,48,2",
+			"minecraft:wooden_pickaxe,0,48,8.0",
+			"minecraft:stone_pickaxe,0,48,4.0",
+			"minecraft:iron_pickaxe,0,48,2.0",
 			"minecraft:gold_pickaxe,0,48,1.5",
-			"minecraft:diamond_pickaxe,0,48,1",
-	        "minecraft:iron_pickaxe,-1,124,2.2",
+			"minecraft:diamond_pickaxe,0,48,1.0",
+			"minecraft:wooden_shovel,0,48,8.0",
+			"minecraft:stone_shovel,0,48,4.0",
+			"minecraft:iron_shovel,0,48,2.0",
+			"minecraft:gold_shovel,0,48,1.5",
+			"minecraft:diamond_shovel,0,48,1.0",
+			"minecraft:wooden_axe,0,48,2.0",
+			"minecraft:stone_axe,0,48,1.0",
+			"minecraft:iron_axe,0,48,0.5",
+			"minecraft:gold_axe,0,48,0.3",
+			"minecraft:diamond_axe,0,48,0.25",			
+			"minecraft:iron_pickaxe,-1,124,2.2",
 	        "minecraft:diamond_pickaxe,-1,124,1.2"
 	};
  
@@ -44,9 +56,9 @@ public class MyConfig
 		if(event.getModID().equals(Reference.MOD_ID))
 		{
 			ConfigManager.sync (event.getModID(), Config.Type.INSTANCE);
+			toolManager.toolInit();
 			if (aDebugLevel>0) {
 				System.out.println("HarderBranchMining Configuration Changed.");
-
 			}
 		}
 	}

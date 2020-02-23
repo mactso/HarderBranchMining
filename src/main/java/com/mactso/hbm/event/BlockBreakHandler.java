@@ -7,7 +7,6 @@ import com.mactso.hbm.config.toolManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -25,19 +24,16 @@ public class BlockBreakHandler {
 	@SubscribeEvent
     public void blockBreak(BlockEvent.BreakEvent event) {   
  
-    	if (event.getPlayer().isCreative()) {
+		if (event.getPlayer()==null) {
+			return;
+		} else if (event.getPlayer().isCreative()) {
     		return;
     	}
     	
-    	int harvestLevel = -1;
-    	// int tieredHarvestLevel = -1;
-    	// int helditem;
-    	// double depthFactor = 0.0;
     	double depthBasedExhaustionFactor = 0.0;
     	double tempExhaustionAmount = 0;
-    	String [] myD = MyConfig.defaultTools;
-        
        
+     
         Item item = event.getPlayer().getHeldItemMainhand().getItem();
         World w = (World) event.getWorld();
         EntityPlayer p = event.getPlayer();

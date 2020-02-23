@@ -24,6 +24,7 @@ public class toolManager {
 	
 	public static void toolInit () {
 		int i = 0;
+		toolHashtable.clear();
 		while (i < MyConfig.defaultTools.length) {
 			try {
 				StringTokenizer st = new StringTokenizer(MyConfig.defaultTools[i], ",");
