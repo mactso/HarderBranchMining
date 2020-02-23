@@ -2,9 +2,15 @@
 package com.mactso.hbm.event;
 
 import com.mactso.hbm.config.MyConfig;
+import com.mactso.hbm.config.toolManager;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,6 +19,8 @@ import com.mactso.hbm.util.Reference;
 
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class BlockBreakHandler {
+	private static final int EXHAUSTION_FIXED = 0;
+	private static final int EXHAUSTION_DEPTH = 1;
 
 	@SubscribeEvent
     public void blockBreak(BlockEvent.BreakEvent event) {   
@@ -27,65 +35,42 @@ public class BlockBreakHandler {
     	// double depthFactor = 0.0;
     	double depthBasedExhaustionFactor = 0.0;
     	double tempExhaustionAmount = 0;
-    	
+    	String [] myD = MyConfig.defaultTools;
         
-    	// System.out.println("Block broken! Player Name  :" + event.getPlayer().getName().getFormattedText());
-        // System.out.println("Block broken! Player Health:" + event.getPlayer().getHealth());
-        // System.out.println("Block broken! Event Y      :" + event.getPos().getY());
-        // System.out.println("Block broken! Tool         :" + event.getPlayer().getHeldItemMainhand());
+       
+        Item item = event.getPlayer().getHeldItemMainhand().getItem();
+        World w = (World) event.getWorld();
+        EntityPlayer p = event.getPlayer();
+        ItemStack tempItemStack = event.getPlayer().getHeldItemMainhand();
+        Item tempItem = event.getPlayer().getHeldItemMainhand().getItem();
+        
+        // domain:tool, dimension
+        toolManager.toolItem toolInfo = toolManager.getToolInfo(tempItem.getRegistryName().toString(),p.dimension);
+        
+        depthBasedExhaustionFactor = toolInfo.getExhaustionY() - event.getPos().getY();
 
-        depthBasedExhaustionFactor = MyConfig.ExhaustionHeight - event.getPos().getY();
-        if (depthBasedExhaustionFactor > 0) 
-        {
-        	if (MyConfig.aBooleanProportionalExhaustion) 
-        	{
-        		depthBasedExhaustionFactor = depthBasedExhaustionFactor / MyConfig.ExhaustionHeight;
-        	} else {
+        if (depthBasedExhaustionFactor < 0)
+        	return;
+        else {
+        	if (MyConfig.aExhaustionType == EXHAUSTION_DEPTH) {
+        		depthBasedExhaustionFactor = depthBasedExhaustionFactor / toolInfo.getExhaustionY();
+        	} else { // EXHAUSTION_FIXED
         		depthBasedExhaustionFactor = 1.0;
         	}
-        } else 
-        {
-        	return;
         }
-        
-         
-        // Two paths to getting the harvest level.  The first seemed harder to read so I'm using the second.
-        // System.out.println("Block broken! Harvest Level:" + event.getPlayer().getHeldItemMainhand().getHarvestLevel(event.getState().getHarvestTool(), event.getPlayer(), event.getState()));
-        System.out.println ("Block Broken! Height=" +  MyConfig.ExhaustionHeight);
-        // harvestLevel = event.getPlayer().getHeldItemMainhand().getHarvestLevel(event.getState().getHarvestTool(), event.getPlayer(), event.getState());
 
-        Item item = event.getPlayer().getHeldItemMainhand().getItem();
-  
-        String itemPickaxeMaterial = "WOOD";
-        
-        if (item instanceof ItemPickaxe) 
-        {
-        	ItemPickaxe itemp = (ItemPickaxe) item;
-        	itemPickaxeMaterial = itemp.getToolMaterialName();
-        	harvestLevel = itemp.getHarvestLevel(null, "pickaxe", null, null);
-        	System.out.println ("ToolMaterialName" + itemPickaxeMaterial +"HarvestLevel : " + harvestLevel );
-        } 
-        
-        if (harvestLevel >= 3) {
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountDiamond * depthBasedExhaustionFactor;
-		} else if (harvestLevel == 2) {
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountIron * depthBasedExhaustionFactor;
-		} else if (harvestLevel == 1) {
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountStone * depthBasedExhaustionFactor;      
-		} else if (itemPickaxeMaterial == "GOLD") {
-    		tempExhaustionAmount = MyConfig.ExhaustionAmountGold * depthBasedExhaustionFactor;
-    	} else if (harvestLevel == 0) {
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountWood * depthBasedExhaustionFactor;
-		} else { // bare hands / wrong tool 
-        	tempExhaustionAmount = MyConfig.ExhaustionAmountWood * depthBasedExhaustionFactor * 1.2;
-		}
+        tempExhaustionAmount = toolInfo.getExhaustionAmt() * depthBasedExhaustionFactor;
         
         event.getPlayer().getFoodStats().addExhaustion((float) tempExhaustionAmount);
 
-        if (MyConfig.aBooleanDebug) {
-        System.out.println("Block broken! tempExhaustionAmount:" + tempExhaustionAmount);      
+        if (MyConfig.aDebugLevel > 0) {
+        	System.out.println ("Block Broken! Player:" + p.getName() + ", Dimension"+ p.dimension + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);      
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = new TextComponentString ("Block Broken! Player:" + p.getName() + ", Dimension"+ p.dimension + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);
+                p.sendMessage(component);
+        	}
         }
     }
-    
+   
 }
 

@@ -1,6 +1,7 @@
 // 1.12.2 version
 package com.mactso.hbm;
 
+import com.mactso.hbm.config.toolManager;
 import com.mactso.hbm.event.BlockBreakHandler;
 import com.mactso.hbm.util.Reference;
 
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 		@EventHandler
 		public void preInit (FMLPreInitializationEvent event) {
+			toolManager.toolInit();
 			System.out.println("HarderBranchMining: Registering Handler");
 			MinecraftForge.EVENT_BUS.register(new BlockBreakHandler ());
 			
