@@ -1,4 +1,4 @@
-//1.15.2 - Check
+//1.15.2
 package com.mactso.hbm;
 
 import com.mactso.hbm.config.MyConfig;
