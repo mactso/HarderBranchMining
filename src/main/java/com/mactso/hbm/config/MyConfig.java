@@ -1,13 +1,16 @@
-//1.15.2
+//1.15.2-2.0
 package com.mactso.hbm.config;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mactso.hbm.Main;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -24,14 +27,11 @@ public class MyConfig
 		SERVER = specPair.getLeft();
 	}
 
-	public static double ExhaustionHeight;
-	public static double ExhaustionAmountWood;
-	public static double ExhaustionAmountStone;
-	public static double ExhaustionAmountIron;
-	public static double ExhaustionAmountGold;
-	public static double ExhaustionAmountDiamond;
-	public static boolean aBooleanProportionalExhaustion;
-	public static boolean aBooleanDebug;
+	public static int    exhaustionType;
+	public static int    debugLevel;
+	public static String[] defaultTools;
+	public static String defaultTools6464;
+
 
 	@SubscribeEvent
 	public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent)
@@ -39,87 +39,101 @@ public class MyConfig
 		if (configEvent.getConfig().getSpec() == MyConfig.SERVER_SPEC)
 		{
 			bakeConfig();
+			ToolManager.toolInit();
 		}
 	}
 
 	public static void bakeConfig()
 	{
-		ExhaustionHeight = SERVER.ExhaustionHeight.get();
-
-		ExhaustionAmountWood = SERVER.ExhaustionAmountWood.get();
-		ExhaustionAmountStone = SERVER.ExhaustionAmountStone.get();
-		ExhaustionAmountIron = SERVER.ExhaustionAmountIron.get();
-		ExhaustionAmountGold = SERVER.ExhaustionAmountGold.get();
-		ExhaustionAmountDiamond = SERVER.ExhaustionAmountDiamond.get();
-	
-		aBooleanProportionalExhaustion = SERVER.aBooleanProportionalExhaustion.get();
-		aBooleanDebug = SERVER.aBooleanDebug.get();
-		
-		System.out.println("HarderBranchMiningConfig: " + ExhaustionHeight + ", " + aBooleanProportionalExhaustion);
+		exhaustionType = SERVER.exhaustionType.get();
+		debugLevel = SERVER.debugLevel.get();
+//		defaultTools = (String[]) SERVER.defaultTools.get().toArray();
+//		String[] str = map1.keySet().toArray(new String[map1.size()]);	
+		defaultTools6464 = SERVER.defaultToolsActual.get() ;
+		defaultTools = SERVER.defaultTools.get().toArray(new String[SERVER.defaultTools.get().size()]);
+		System.out.println("HarderBranchMiningConfig Type:" + exhaustionType + ", Debug Level:" + debugLevel);
 
 	}
 
 	public static class Server
 	{
-		public final DoubleValue ExhaustionHeight;
-		public final DoubleValue ExhaustionAmountWood;
-		public final DoubleValue ExhaustionAmountStone;
-		public final DoubleValue ExhaustionAmountIron;
-		public final DoubleValue ExhaustionAmountGold;
-		public final DoubleValue ExhaustionAmountDiamond;
-		public final BooleanValue aBooleanProportionalExhaustion;
-		public final BooleanValue aBooleanDebug;
-
+		public final IntValue	 exhaustionType;
+		public final IntValue	 debugLevel;
+		public final ConfigValue<String> defaultToolsActual;		
+		public final String defaultTools6464 = 
+		  "hbm:default,0,48,10;\n\r"
+	  	+ "minecraft:wooden_pickaxe,0,48,8.0;\n\r"
+		+ "minecraft:stone_pickaxe,0,48,4.0;\n\r"
+		+ "minecraft:iron_pickaxe,0,48,2.0;\n\r"
+		+ "minecraft:golden_pickaxe,0,48,1.5;\n\r"
+		+ "minecraft:diamond_pickaxe,0,48,1.0;\n\r"
+		+ "minecraft:wooden_shovel,0,48,8.0;\n\r"
+		+ "minecraft:stone_shovel,0,48,4.0;\n\r"
+		+ "minecraft:iron_shovel,0,48,2.0;\n\r"
+		+ "minecraft:golden_shovel,0,48,1.5;\n\r"
+		+ "minecraft:diamond_shovel,0,48,1.0;\n\r"
+		+ "minecraft:wooden_axe,0,48,2.0;\n\r"
+		+ "minecraft:stone_axe,0,48,1.0;\n\r"
+		+ "minecraft:iron_axe,0,48,0.5;\n\r"
+		+ "minecraft:golden_axe,0,48,0.3;\n\r"
+		+ "minecraft:diamond_axe,0,48,0.25;\n\r"			
+		+ "minecraft:iron_pickaxe,-1,124,2.2;\n\r"
+		+ "minecraft:diamond_pickaxe,-1,124,1.2;\n\r";
+		
+		public final ConfigValue<List<String>> defaultTools;
+		// "Tool Values: mod:tool, Dim, Height, Exhaustion"
+		public static List<String> defaultToolsArray= Arrays.asList(
+				    "hbm:default,0,48,10",
+				    "minecraft:wooden_pickaxe,0,48,8.0",
+					"minecraft:stone_pickaxe,0,48,4.0",
+					"minecraft:iron_pickaxe,0,48,2.0",
+					"minecraft:golden_pickaxe,0,48,1.5",
+					"minecraft:diamond_pickaxe,0,48,1.0",
+					"minecraft:wooden_shovel,0,48,8.0",
+					"minecraft:stone_shovel,0,48,4.0",
+					"minecraft:iron_shovel,0,48,2.0",
+					"minecraft:golden_shovel,0,48,1.5",
+					"minecraft:diamond_shovel,0,48,1.0",
+					"minecraft:wooden_axe,0,48,2.0",
+					"minecraft:stone_axe,0,48,1.0",
+					"minecraft:iron_axe,0,48,0.5",
+					"minecraft:golden_axe,0,48,0.3",
+					"minecraft:diamond_axe,0,48,0.25",			
+					"minecraft:iron_pickaxe,-1,124,2.2",
+			        "minecraft:diamond_pickaxe,-1,124,1.2"
+			);
 
 		public Server(ForgeConfigSpec.Builder builder) {
 
-			builder.push("Exhaustion Height");
-			ExhaustionHeight = builder
-					.comment("Depth Extra Exhaustion Starts At")
-					.translation(Main.MODID + ".config." + "ExhaustionHeight")
-					.defineInRange("ExhaustionHeight", () -> 48.0, 5.0, 196.0);
+			builder.push("Exhaustion Control Values");
 
+			exhaustionType= builder
+					.comment("Exhaustion Type: 0 = Fixed, 1=Proportional")
+					.translation(Main.MODID + ".config." + "exhaustionType")
+					.defineInRange("exhaustionType", () -> 1, 0, 1);
+
+			debugLevel = builder
+					.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
+					.translation(Main.MODID + ".config." + "debugLevel")
+					.defineInRange("debugLevel", () -> 0, 0, 2);
 			builder.pop();
-			
-			aBooleanProportionalExhaustion = builder
-					.comment("Exhaustion Proportional to Depth or Flat")
-					.translation(Main.MODID + ".config." + "aBooleanProportionalExhaustion")
-					.define("aBooleanProportionalExhaustion", false);
-
-			aBooleanDebug = builder
-					.comment("Print Debug Message on Block Break")
-					.translation(Main.MODID + ".config." + "aBooleanDebug")
-					.define("aBooleanDebug", false);
-
-			builder.push("Tool Exhaustion");
-
-			ExhaustionAmountWood = builder
-					.comment("Wood Tool Exhaustion Amount")
-					.translation(Main.MODID + ".config." + "ExhaustionAmountWood")
-					.defineInRange("ExhaustionAmountWood", () -> 8.0, 0.1, 40.0);
-
-			ExhaustionAmountStone = builder
-					.comment("Stone Tool Exhaustion Amount")
-					.translation(Main.MODID + ".config." + "ExhaustionAmountStone")
-					.defineInRange("ExhaustionAmountStone", () -> 4.0, 0.1, 40.0);
-			
-			ExhaustionAmountIron = builder
-					.comment("Iron Tool Exhaustion Amount")
-					.translation(Main.MODID + ".config." + "ExhaustionAmountIron")
-					.defineInRange("ExhaustionAmountIron", () -> 2.0, 0.1, 40.0);
-
-			ExhaustionAmountGold = builder
-					.comment("Gold Tool Exhaustion Amount")
-					.translation(Main.MODID + ".config." + "ExhaustionAmountGold")
-					.defineInRange("ExhaustionAmountGold", () -> 1.5, 0.1, 40.0);
-			
-			ExhaustionAmountDiamond= builder
-					.comment("Diamond Tool Exhaustion Amount")
-					.translation(Main.MODID + ".config." + "ExhaustionAmountDiamond")
-					.defineInRange("ExhaustionAmountDiamond", () -> 1.0, 0.1, 40.0);
-		
+			builder.push ("Tool Values 6464");
+			defaultToolsActual = builder
+					.comment("Tool String 6464")
+					.translation(Main.MODID + ".config" + "defaultToolsActual")
+					.define("defaultToolsActual", defaultTools6464);
 			builder.pop();
+			builder.push("Tool Values");
+			defaultTools = builder
+					.comment("Tool String")
+					.translation(Main.MODID + ".config" + "defaultTools")
+					.define("defaultTools", defaultToolsArray );					
+			builder.pop();
+
+
 
 		}
 	}
+	
 }
+
