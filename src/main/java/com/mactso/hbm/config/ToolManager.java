@@ -45,7 +45,7 @@ public class ToolManager {
 		// Issue 6464 patch.
 		StringTokenizer st6464 = new StringTokenizer(MyConfig.defaultTools6464, ";");
 		while (st6464.hasMoreElements()) {
-			toolLine6464 = st6464.nextToken();
+			toolLine6464 = st6464.nextToken().trim();
 			if (toolLine6464.isEmpty()) continue;
 			dTL6464.add(toolLine6464);  
 			i++;
@@ -58,7 +58,7 @@ public class ToolManager {
 		while (i < MyConfig.defaultTools.length) {
 			try {
 				StringTokenizer st = new StringTokenizer(MyConfig.defaultTools[i], ",");
-				String modAndTool = st.nextToken().trim();
+				String modAndTool = st.nextToken();
 				String key = modAndTool + ":" + st.nextToken(); //append dimension number.
 				
 				double tExhaustionY = Double.parseDouble(st.nextToken());
