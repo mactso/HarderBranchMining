@@ -61,9 +61,15 @@ public class toolManager {
 			this.toolExhaustionY = toolExhaustionY;
 			this.toolExhaustionAmount = toolExhaustionAmount;
 		}
+		/*
+		 *  "Y value where exhaustion begins to apply"
+		 */
 		public double getExhaustionY () {
 			return toolExhaustionY;
-		}
+		} 
+		/*
+		 * A value from 0 to 40 of bonus exhaustion.  8.0 =~ 1 food bar per block;
+		 */
 		public double getExhaustionAmt () {
 			return toolExhaustionAmount;
 		}
