@@ -45,6 +45,12 @@ public class MyConfig
 		}
 	}
 
+	public static void pushValues() {
+		SERVER.exhaustionType.set( MyConfig.aExhaustionType);
+		SERVER.aDigSpeedModifier.set( MyConfig.aDigSpeedModifier);
+		SERVER.debugLevel.set( MyConfig.aDebugLevel);
+	}
+	
 	public static void bakeConfig()
 	{
 		aExhaustionType = SERVER.exhaustionType.get();

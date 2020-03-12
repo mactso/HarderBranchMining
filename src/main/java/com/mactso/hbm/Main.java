@@ -42,6 +42,6 @@ public class Main
 	public void onServerStarting (FMLServerStartingEvent event) {
 		
 		ToolManager.toolInit();
-		
+		HBMCommand.register(event.getCommandDispatcher());
 	}
 }
