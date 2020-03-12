@@ -33,7 +33,7 @@ public class BlockBreakHandler {
     		return;
     	}
     	
-    	double depthBasedExhaustionFactor = 0.0;
+    	double depthBasedExhaustionFactor = 0.01;
     	double tempExhaustionAmount = 0;
        
      
@@ -105,10 +105,12 @@ public class BlockBreakHandler {
     	
 		// float baseDestroySpeed = playerItem.getDestroySpeed(p.getHeldItemMainhand(), s);
 		float baseDestroySpeed = event.getOriginalSpeed();
-
-    	float newDestroySpeed = (float) baseDestroySpeed - 
-				((float) baseDestroySpeed * (float)depthBasedSpeedFactor );
-		newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
+		float newDestroySpeed = baseDestroySpeed;
+		
+		if (MyConfig.aDigSpeedModifier>1.0) {
+			newDestroySpeed = baseDestroySpeed - baseDestroySpeed * (float) depthBasedSpeedFactor;
+			newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
+		}	
 		
 		if (newDestroySpeed > 0) {
 			event.setNewSpeed(newDestroySpeed);
