@@ -46,9 +46,13 @@ public class MyConfig
 	}
 
 	public static void pushValues() {
+		System.out.println("dbgL:"+MyConfig.aDebugLevel
+						 +" exT:"+MyConfig.aExhaustionType
+						 +" DSM:" + MyConfig.aDigSpeedModifier);
+		SERVER.debugLevel.set( MyConfig.aDebugLevel);
 		SERVER.exhaustionType.set( MyConfig.aExhaustionType);
 		SERVER.aDigSpeedModifier.set( MyConfig.aDigSpeedModifier);
-		SERVER.debugLevel.set( MyConfig.aDebugLevel);
+
 	}
 	
 	public static void bakeConfig()

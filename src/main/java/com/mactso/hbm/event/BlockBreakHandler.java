@@ -80,6 +80,7 @@ public class BlockBreakHandler {
 	@SubscribeEvent
 	public void blockBreakSpeed(PlayerEvent.BreakSpeed event) {
     	double depthBasedSpeedFactor = 0.0;
+    	String worldName = "server-local ";
     	
     	if(event.getPlayer() == null) {
 			return;
@@ -88,6 +89,9 @@ public class BlockBreakHandler {
 		} 
 
    		PlayerEntity p = event.getPlayer();
+   		if (p.world.isRemote()) {
+   			worldName = "client-remote ";
+   		}
     	Item playerItem = p.getHeldItemMainhand().getItem();
     	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
     		return;
@@ -125,11 +129,15 @@ public class BlockBreakHandler {
  
 		if (MyConfig.aDebugLevel > 0) {
 			if (debugLimiter++ > 2) {
+				System.out.println("dbgL:"+MyConfig.aDebugLevel
+						 +" exT:"+MyConfig.aExhaustionType
+						 +" DSM:" + MyConfig.aDigSpeedModifier);
 				System.out.println("Block Speed ! depthSpeedFactor:" + (depthBasedSpeedFactor * 100) + "%");
 				System.out.println("Block Speed ! Configured digSpeedModifer:" + (MyConfig.aDigSpeedModifier * 100) + "%");
-				System.out.println("Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed())+ "DigSpeedMod:"+ MyConfig.aDigSpeedModifier + ".");
-				if (MyConfig.aDebugLevel > 1) {
-		            ITextComponent component = new StringTextComponent ("Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed()) + ".");
+				System.out.println("Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed())+ " DigSpeedMod:"+ MyConfig.aDigSpeedModifier + ".");
+				if (MyConfig.aDebugLevel > 1 && p.world.isRemote())  {
+		            ITextComponent component = new StringTextComponent (worldName +" Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed()) + "."
+		            		+ " DigSpeedMod:"+ MyConfig.aDigSpeedModifier + ".");
 		            p.sendMessage(component);
 		    	}
 				debugLimiter = 0;
