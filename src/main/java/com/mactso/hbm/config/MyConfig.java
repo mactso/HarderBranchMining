@@ -10,6 +10,7 @@ import com.mactso.hbm.Main;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,8 +28,9 @@ public class MyConfig
 		SERVER = specPair.getLeft();
 	}
 
-	public static int    exhaustionType;
-	public static int    debugLevel;
+	public static int    aExhaustionType;
+	public static int    aDebugLevel;
+	public static double    aDigSpeedModifier;
 	public static String[] defaultTools;
 	public static String defaultTools6464;
 
@@ -45,13 +47,14 @@ public class MyConfig
 
 	public static void bakeConfig()
 	{
-		exhaustionType = SERVER.exhaustionType.get();
-		debugLevel = SERVER.debugLevel.get();
+		aExhaustionType = SERVER.exhaustionType.get();
+		aDebugLevel = SERVER.debugLevel.get();
+		aDigSpeedModifier = SERVER.aDigSpeedModifier.get();
 //		defaultTools = (String[]) SERVER.defaultTools.get().toArray();
 //		String[] str = map1.keySet().toArray(new String[map1.size()]);	
 		defaultTools6464 = SERVER.defaultToolsActual.get() ;
 		defaultTools = SERVER.defaultTools.get().toArray(new String[SERVER.defaultTools.get().size()]);
-		System.out.println("HarderBranchMiningConfig Type:" + exhaustionType + ", Debug Level:" + debugLevel);
+		System.out.println("HarderBranchMiningConfig Type:" + aExhaustionType + ", Debug Level:" + aDebugLevel);
 
 	}
 
@@ -59,6 +62,7 @@ public class MyConfig
 	{
 		public final IntValue	 exhaustionType;
 		public final IntValue	 debugLevel;
+		public final DoubleValue aDigSpeedModifier;
 		public final ConfigValue<String> defaultToolsActual;		
 		public final String defaultTools6464 = 
 		  "hbm:default,0,48,10;\n\r"
@@ -106,7 +110,6 @@ public class MyConfig
 		public Server(ForgeConfigSpec.Builder builder) {
 
 			builder.push("Exhaustion Control Values");
-
 			exhaustionType= builder
 					.comment("Exhaustion Type: 0 = Fixed, 1=Proportional")
 					.translation(Main.MODID + ".config." + "exhaustionType")
@@ -116,13 +119,20 @@ public class MyConfig
 					.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
 					.translation(Main.MODID + ".config." + "debugLevel")
 					.defineInRange("debugLevel", () -> 0, 0, 2);
+			
+			aDigSpeedModifier = builder
+					.comment("Digging Speed Modifer: (none) 1.0 to (max) 16.0")
+					.translation(Main.MODID + ".config." + "aDigSpeedModifier")
+					.defineInRange("aDigSpeedModifier", () -> 1.09, 1.0, 16.0);
 			builder.pop();
+			
 			builder.push ("Tool Values 6464");
 			defaultToolsActual = builder
 					.comment("Tool String 6464")
 					.translation(Main.MODID + ".config" + "defaultToolsActual")
 					.define("defaultToolsActual", defaultTools6464);
 			builder.pop();
+			
 			builder.push("Tool Values");
 			defaultTools = builder
 					.comment("Tool String")
