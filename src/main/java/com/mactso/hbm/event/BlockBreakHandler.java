@@ -4,6 +4,7 @@ package com.mactso.hbm.event;
 import com.mactso.hbm.config.MyConfig;
 import com.mactso.hbm.config.ToolManager;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -36,10 +37,22 @@ public class BlockBreakHandler {
     	double depthBasedExhaustionFactor = 0.0;
     	double tempExhaustionAmount = 0;
        
-     
-        Item item = event.getPlayer().getHeldItemMainhand().getItem();
-        World w = (World) event.getWorld();
         PlayerEntity p = event.getPlayer();
+        Item item = p.getHeldItemMainhand().getItem();
+
+        // no exhaustion for soft items.
+       	if (1 >= event.getState().getBlockHardness(event.getWorld(), event.getPos())) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new StringTextComponent ("Block Broken! Soft Block.  No Exhaustion.");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                p.sendMessage(component);
+        	}
+       		return;
+       	}
+
+        
+        World w = (World) event.getWorld();
         ItemStack tempItemStack = event.getPlayer().getHeldItemMainhand();
         Item tempItem = event.getPlayer().getHeldItemMainhand().getItem();
         
@@ -80,6 +93,8 @@ public class BlockBreakHandler {
 	@SubscribeEvent
 	public void blockBreakSpeed(PlayerEvent.BreakSpeed event) {
     	double depthBasedSpeedFactor = 0.0;
+
+    	
     	String worldName = "server-local ";
     	
     	if(event.getPlayer() == null) {
@@ -96,7 +111,19 @@ public class BlockBreakHandler {
     	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
     		return;
     	}
-    		
+
+        Item item = p.getHeldItemMainhand().getItem();
+
+        // no slowdown for soft items.
+        if (p.getHeldItemMainhand().isEmpty()) {
+        	BlockState s = event.getState();
+        	double hardness = s.getBlockHardness(p.world, event.getPos());
+        	Block b = event.getState().getBlock();
+        	if (hardness <= 1.0) {
+        		return;
+        	}
+        }
+    	
         // key = moddomain:tool,dimension
 
 		ToolManager.toolItem toolInfo = 
@@ -120,8 +147,11 @@ public class BlockBreakHandler {
 		if (MyConfig.aDigSpeedModifier>1.0) {
 			newDestroySpeed = baseDestroySpeed - baseDestroySpeed * (float) depthBasedSpeedFactor;
 			newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
+			if (event.getPos().getY() < p.getPosition().getY()) {
+				newDestroySpeed = newDestroySpeed / (float) MyConfig.aDownSpeedModifier;
+			}
 		}
-
+		
 		
 		if (newDestroySpeed > 0) {
 			event.setNewSpeed(newDestroySpeed);

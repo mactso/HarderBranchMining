@@ -28,11 +28,12 @@ public class MyConfig
 		SERVER = specPair.getLeft();
 	}
 
-	public static int    aExhaustionType;
-	public static int    aDebugLevel;
+	public static int       aExhaustionType;
+	public static int       aDebugLevel;
+	public static double    aDownSpeedModifier;
 	public static double    aDigSpeedModifier;
-	public static String[] defaultTools;
-	public static String defaultTools6464;
+	public static String[]  defaultTools;
+	public static String    defaultTools6464;
 
 
 	@SubscribeEvent
@@ -47,11 +48,13 @@ public class MyConfig
 
 	public static void pushValues() {
 		System.out.println("dbgL:"+MyConfig.aDebugLevel
-						 +" exT:"+MyConfig.aExhaustionType
-						 +" DSM:" + MyConfig.aDigSpeedModifier);
+						 +" exhT:"+MyConfig.aExhaustionType
+						 +" DigSM:" + MyConfig.aDigSpeedModifier
+						 +" DwnSM:" + MyConfig.aDigSpeedModifier);
 		SERVER.debugLevel.set( MyConfig.aDebugLevel);
 		SERVER.exhaustionType.set( MyConfig.aExhaustionType);
 		SERVER.aDigSpeedModifier.set( MyConfig.aDigSpeedModifier);
+		SERVER.aDownExhaustion.set( MyConfig.aDownSpeedModifier);
 
 	}
 	
@@ -60,6 +63,7 @@ public class MyConfig
 		aExhaustionType = SERVER.exhaustionType.get();
 		aDebugLevel = SERVER.debugLevel.get();
 		aDigSpeedModifier = SERVER.aDigSpeedModifier.get();
+		aDownSpeedModifier = SERVER.aDownExhaustion.get();
 //		defaultTools = (String[]) SERVER.defaultTools.get().toArray();
 //		String[] str = map1.keySet().toArray(new String[map1.size()]);	
 		defaultTools6464 = SERVER.defaultToolsActual.get() ;
@@ -73,9 +77,11 @@ public class MyConfig
 		public final IntValue	 exhaustionType;
 		public final IntValue	 debugLevel;
 		public final DoubleValue aDigSpeedModifier;
+		public final DoubleValue aDownExhaustion;	
 		public final ConfigValue<String> defaultToolsActual;		
 		public final String defaultTools6464 = 
-		  "hbm:default,0,48,10;\n\r"
+		  "hbm:default,0,48,10.0;\n\r"
+		+ "minecraft:torch,0,48,0.2;\n\r"		  
 	  	+ "minecraft:wooden_pickaxe,0,48,8.0;\n\r"
 		+ "minecraft:stone_pickaxe,0,48,4.0;\n\r"
 		+ "minecraft:iron_pickaxe,0,48,2.0;\n\r"
@@ -97,7 +103,8 @@ public class MyConfig
 		public final ConfigValue<List<String>> defaultTools;
 		// "Tool Values: mod:tool, Dim, Height, Exhaustion"
 		public static List<String> defaultToolsArray= Arrays.asList(
-				    "hbm:default,0,48,10",
+				    "hbm:default,0,48,10.0",
+				    "minecraft:torch,0,48,0.2",
 				    "minecraft:wooden_pickaxe,0,48,8.0",
 					"minecraft:stone_pickaxe,0,48,4.0",
 					"minecraft:iron_pickaxe,0,48,2.0",
@@ -131,9 +138,14 @@ public class MyConfig
 					.defineInRange("debugLevel", () -> 0, 0, 2);
 			
 			aDigSpeedModifier = builder
-					.comment("Digging Speed Modifer: (none) 1.0 to (max) 16.0")
+					.comment("Digging Speed Modifer: (none) 1.0 to (max) 32.0")
 					.translation(Main.MODID + ".config." + "aDigSpeedModifier")
-					.defineInRange("aDigSpeedModifier", () -> 1.09, 1.0, 16.0);
+					.defineInRange("aDigSpeedModifier", () -> 1.09, 1.0, 32.0);
+			
+			aDownExhaustion = builder
+					.comment("Down Speed Modifer: (none) 1.0 to (max) 32.0")
+					.translation(Main.MODID + ".config." + "aDownExhaustion")
+					.defineInRange("aDownExhaustion", () -> 1.03, 1.0, 32.0);
 			builder.pop();
 			
 			builder.push ("Tool Values 6464");
