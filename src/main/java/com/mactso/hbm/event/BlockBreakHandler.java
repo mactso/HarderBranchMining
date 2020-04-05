@@ -6,6 +6,7 @@ import com.mactso.hbm.config.ToolManager;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.OreBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -49,6 +50,14 @@ public class BlockBreakHandler {
                 p.sendMessage(component);
         	}
        		return;
+       	}
+       	
+        // normal exhaustion for ore blocks
+       	Block block = event.getState().getBlock();
+       	if (block instanceof OreBlock) {
+       		if (MyConfig.aNormalOre) {
+       			return;
+       		}
        	}
 
         
@@ -111,6 +120,15 @@ public class BlockBreakHandler {
     	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
     		return;
     	}
+    	
+        // normal mining speed for ore blocks?  default =  true.
+       	Block block = event.getState().getBlock();
+       	if (block instanceof OreBlock) {
+       		if (MyConfig.aNormalOre) {
+       			return;
+       		}
+       	}
+    	
 
         Item item = p.getHeldItemMainhand().getItem();
 

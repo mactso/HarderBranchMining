@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.mactso.hbm.Main;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
@@ -32,6 +33,7 @@ public class MyConfig
 	public static int       aDebugLevel;
 	public static double    aDownSpeedModifier;
 	public static double    aDigSpeedModifier;
+	public static boolean   aNormalOre;
 	public static String[]  defaultTools;
 	public static String    defaultTools6464;
 
@@ -55,7 +57,7 @@ public class MyConfig
 		SERVER.exhaustionType.set( MyConfig.aExhaustionType);
 		SERVER.aDigSpeedModifier.set( MyConfig.aDigSpeedModifier);
 		SERVER.aDownExhaustion.set( MyConfig.aDownSpeedModifier);
-
+		SERVER.aNormalOre.set( MyConfig.aNormalOre);
 	}
 	
 	public static void bakeConfig()
@@ -64,6 +66,7 @@ public class MyConfig
 		aDebugLevel = SERVER.debugLevel.get();
 		aDigSpeedModifier = SERVER.aDigSpeedModifier.get();
 		aDownSpeedModifier = SERVER.aDownExhaustion.get();
+		aNormalOre = SERVER.aNormalOre.get();		
 //		defaultTools = (String[]) SERVER.defaultTools.get().toArray();
 //		String[] str = map1.keySet().toArray(new String[map1.size()]);	
 		defaultTools6464 = SERVER.defaultToolsActual.get() ;
@@ -78,6 +81,7 @@ public class MyConfig
 		public final IntValue	 debugLevel;
 		public final DoubleValue aDigSpeedModifier;
 		public final DoubleValue aDownExhaustion;	
+		public final BooleanValue aNormalOre;	
 		public final ConfigValue<String> defaultToolsActual;		
 		public final String defaultTools6464 = 
 		  "hbm:default,0,48,10.0;\n\r"
@@ -146,6 +150,11 @@ public class MyConfig
 					.comment("Down Speed Modifer: (none) 1.0 to (max) 32.0")
 					.translation(Main.MODID + ".config." + "aDownExhaustion")
 					.defineInRange("aDownExhaustion", () -> 1.03, 1.0, 32.0);
+
+			aNormalOre = builder
+					.comment("Normal Ore Behavior: true")
+					.translation(Main.MODID + ".config." + "aNormalOre")
+					.define ("aNormalOre", () -> true);
 			builder.pop();
 			
 			builder.push ("Tool Values 6464");
