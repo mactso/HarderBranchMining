@@ -55,7 +55,8 @@ import net.minecraftforge.fml.relauncher.Side;
 		    	MyConfig.serverSide = true;
 		        EntityPlayerMP entity = (EntityPlayerMP) event.player;
 		        System.out.println("Server dig:" + MyConfig.aDigSpeedModifier);
-		        Manager.sendToClient(new HBMPacket (MyConfig.aDigSpeedModifier), entity);
+		        System.out.println("Server down:" + MyConfig.aDigSpeedModifier);
+		        Manager.sendToClient(new HBMPacket (MyConfig.aDigSpeedModifier,MyConfig.aDownSpeedModifier), entity);
 		    }			
 		}
 	 }

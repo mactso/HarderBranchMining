@@ -24,8 +24,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod.EventBusSubscriber
 public class MyConfig
 {
+	
 	@Ignore
 	public static double serverDigSpeed = 1.0;
+
+	@Ignore
+	public static double serverDownSpeed = 1.01;
 	
 	@Ignore
 	public static boolean serverSide = false;
@@ -36,9 +40,18 @@ public class MyConfig
 	public static int aExhaustionType = 1;
 
 	@Comment ( { "Depth Dig Speed Modifier" } )
-	@Name ("1-16.0:'No Effect' to 'Slow'")
-	@RangeDouble (min=1.0, max=16.0)
+	@Name ("Dig   1 to 11.0 : 'No Effect' to 'Slow'")
+	@RangeDouble (min=1.0, max=11.0)
 	public static double aDigSpeedModifier = 1.09;
+
+	@Comment ( { "Down Speed Modifier" } )
+	@Name ("Down 1 to 11.0 : 'No Effect' to 'Slow'")
+	@RangeDouble (min=1.0, max=11.0)
+	public static double aDownSpeedModifier = 1.03;	
+
+	@Comment ( { "Ignore Ore?" } )
+	@Name ("True: Ignore, False: Exhausting & Slow Ore")
+	public static boolean aIgnoreOreFlag = true;		
 	
 	@Comment ( { "Print Debugging Messages to Log" } )
 	@Name ( "Log Debugging: 0=minimal, 1= log, 2 = log + chat" )
@@ -49,6 +62,7 @@ public class MyConfig
 	@Name ( "Tool Values: mod:tool, Dim, Height, Exhaustion" )
 	public static String [] defaultTools= 
 	{	    "hbm:default,0,48,10",
+			"Minecraft:torch,0,48,0.01",
 			"minecraft:wooden_pickaxe,0,48,8.0",
 			"minecraft:stone_pickaxe,0,48,4.0",
 			"minecraft:iron_pickaxe,0,48,2.0",
@@ -79,8 +93,10 @@ public class MyConfig
 			if (!serverSide) {
 				if (aDebugLevel>0) {
 					System.out.println("HarderBranchMining ("+ serverSide+") Configuration Change "+aDigSpeedModifier+"reset to=" + serverDigSpeed);
+					System.out.println("HarderBranchMining ("+ serverSide+") Configuration Change "+aDownSpeedModifier+"reset to=" + serverDownSpeed);
 				}				
 				aDigSpeedModifier = serverDigSpeed;
+				aDownSpeedModifier = serverDownSpeed;
 			}
 		}
 	}

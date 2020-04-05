@@ -1,15 +1,20 @@
 // 1.12.2 version
 package com.mactso.hbm.event;
 
+import com.google.common.collect.ImmutableMap;
 import com.mactso.hbm.config.MyConfig;
 import com.mactso.hbm.config.toolManager;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockOre;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -35,16 +40,41 @@ public class BlockBreakHandler {
     	
     	double depthBasedExhaustionFactor = 0.01;
     	double tempExhaustionAmount = 0;
-       
-     
-        // Item item = event.getPlayer().getHeldItemMainhand().getItem();
-        // World w = (World) event.getWorld();
-        // ItemStack tempItemStack = event.getPlayer().getHeldItemMainhand();
-        EntityPlayer p = event.getPlayer();
-    	Item tempItem = p.getHeldItemMainhand().getItem();
 
+        EntityPlayer player = event.getPlayer();
+    	Item tempItem = player.getHeldItemMainhand().getItem();
+
+        // no exhaustion for soft items.
+       	if (1 >= event.getState().getBlockHardness(event.getWorld(), event.getPos())) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new TextComponentString ("Block Broken! Soft Block.  No Exhaustion.");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                player.sendMessage(component);
+        	}
+       		return;
+       	}
+
+       	// Ignore exhaustion/slowdown for ore?
+       	Block block = event.getState().getBlock();
+       	if (block instanceof BlockOre) {
+       		if (MyConfig.aIgnoreOreFlag) {
+       			return;
+       		}
+       	}
+//        // Ignore Exhaustion for Ore if selected.
+//       	if (MyConfig.aIgnoreOreFlag) && (event.getState().withProperty(, value) getBlockHardness(event.getWorld(), event.getPos())) {
+//        	if (MyConfig.aDebugLevel > 1) {
+//                ITextComponent component = 
+//                		new TextComponentString ("Block Broken! Soft Block.  No Exhaustion.");
+//                component.getStyle().setColor(TextFormatting.GREEN);
+//                property.sendMessage(component);
+//        	}
+//       		return;
+//       	}       	
+//    	
         // domain:tool, dimension
-        toolManager.toolItem toolInfo = toolManager.getToolInfo(tempItem.getRegistryName().toString(),p.dimension);
+        toolManager.toolItem toolInfo = toolManager.getToolInfo(tempItem.getRegistryName().toString(),player.dimension);
         
         depthBasedExhaustionFactor = toolInfo.getExhaustionY() - event.getPos().getY();
 
@@ -63,10 +93,10 @@ public class BlockBreakHandler {
         event.getPlayer().getFoodStats().addExhaustion((float) tempExhaustionAmount);
 
         if (MyConfig.aDebugLevel > 0) {
-        	System.out.println ("Block Broken! Player:" + p.getName() + ", Dimension"+ p.dimension + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);      
+        	System.out.println ("Block Broken! Player:" + player.getName() + ", Dimension"+ player.dimension + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);      
         	if (MyConfig.aDebugLevel > 1) {
-                ITextComponent component = new TextComponentString ("Block Broken! Player:" + p.getName() + ", Dimension"+ p.dimension + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);
-                p.sendMessage(component);
+                ITextComponent component = new TextComponentString ("Block Broken! Player:" + player.getName() + ", Dimension"+ player.dimension + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);
+                player.sendMessage(component);
         	}
         }
     }
@@ -86,7 +116,15 @@ public class BlockBreakHandler {
     	if (!playerItem.canHarvestBlock(event.getState(), p.getHeldItemMainhand())) {
     		return;
     	}
-    		
+
+       	// Ignore exhaustion for ore?
+       	Block block = event.getState().getBlock();
+       	if (block instanceof BlockOre) {
+       		if (MyConfig.aIgnoreOreFlag) {
+       			return;
+       		}
+       	}
+    	
         // key = moddomain:tool,dimension
 
 		toolManager.toolItem toolInfo = 
@@ -110,6 +148,9 @@ public class BlockBreakHandler {
 		if (MyConfig.aDigSpeedModifier>1.0) {
 			newDestroySpeed = baseDestroySpeed - baseDestroySpeed * (float) depthBasedSpeedFactor;
 			newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
+			if (event.getPos().getY() < p.getPosition().getY()) {
+				newDestroySpeed = newDestroySpeed / (float) MyConfig.aDownSpeedModifier;
+			}
 		}	
 		
 		if (newDestroySpeed > 0) {

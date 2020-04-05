@@ -13,26 +13,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class HBMPacket implements IMessage
 {
 	private double aDigSpeedModifier;
+	private double aDownSpeedModifier;
 	
 	public HBMPacket()
 	{
 	}
 	
-	public HBMPacket(double aDigSpeedModifier)
+	public HBMPacket(double aNewDigSpeedModifier, double aNewDownSpeedModifier)
 	{
-		this.aDigSpeedModifier = aDigSpeedModifier;
+		this.aDigSpeedModifier = aNewDigSpeedModifier;
+		this.aDownSpeedModifier = aNewDownSpeedModifier;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
 		aDigSpeedModifier = buf.readDouble();
-	}
+		aDownSpeedModifier = buf.readDouble();	}
 
 	@Override
 	public void toBytes(ByteBuf buf)
 	{
 		buf.writeDouble(aDigSpeedModifier);
+		buf.writeDouble(aDownSpeedModifier);
+
 	}
 	
 	public static class HBMHandler implements IMessageHandler<HBMPacket, IMessage>
@@ -42,10 +46,13 @@ public class HBMPacket implements IMessage
 		{
 			if (MyConfig.aDebugLevel>0) {
 				System.out.println("Message dig: " + message.aDigSpeedModifier);
+				System.out.println("Message down: " + message.aDownSpeedModifier);
 			}
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				MyConfig.serverDigSpeed = message.aDigSpeedModifier;
 				MyConfig.aDigSpeedModifier = message.aDigSpeedModifier;				
+				MyConfig.serverDownSpeed = message.aDigSpeedModifier;
+				MyConfig.aDownSpeedModifier = message.aDownSpeedModifier;	
 			});
 			return null;	
 		}
