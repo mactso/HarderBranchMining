@@ -56,7 +56,7 @@ public class MyConfig
 	@Comment ( { "Print Debugging Messages to Log" } )
 	@Name ( "Log Debugging: 0=minimal, 1= log, 2 = log + chat" )
 	@RangeInt (min=0, max=2)
-	public static int aDebugLevel = 1;
+	public static int aDebugLevel = 0;
 
 	@Comment ( { "\"Tool Values: mod:tool, Dimension #, ExhaustionMaxY(5-255), Exhaustion Amount(0-40)" } )
 	@Name ( "Tool Values: mod:tool, Dim, Height, Exhaustion" )
@@ -82,6 +82,20 @@ public class MyConfig
 	        "minecraft:diamond_pickaxe,-1,124,1.2"
 	};
  
+	@Comment ( { "\"Whitelist Blocks: Mod:Block" } )
+	@Name ( "Whitelist Blocks : Mod: Block" )
+	public static String [] whiteList= 
+	{	    "ore_stone_variants:coal_ore",
+			"ore_stone_variants:iron_ore",
+			"ore_stone_variants:gold_ore",
+			"ore_stone_variants:diamond_ore",
+			"ore_stone_variants:lapis_ore",
+			"ore_stone_variants:redstone_ore",
+			"rockcandy:candy_ore",
+			"minecraft:planks",
+			"minecraft:fence"
+	};	
+	
 	@SubscribeEvent
 	public static void onModConfigEvent(OnConfigChangedEvent event)
 	{
@@ -90,6 +104,8 @@ public class MyConfig
 		{
 			ConfigManager.sync (event.getModID(), Config.Type.INSTANCE);
 			toolManager.toolInit();
+			whiteListManager.whitelistInit();
+
 			if (!serverSide) {
 				if (aDebugLevel>0) {
 					System.out.println("HarderBranchMining ("+ serverSide+") Configuration Change "+aDigSpeedModifier+"reset to=" + serverDigSpeed);

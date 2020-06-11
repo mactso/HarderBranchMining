@@ -4,6 +4,7 @@ package com.mactso.hbm.event;
 import com.google.common.collect.ImmutableMap;
 import com.mactso.hbm.config.MyConfig;
 import com.mactso.hbm.config.toolManager;
+import com.mactso.hbm.config.whiteListManager;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
@@ -19,6 +20,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+
 import com.mactso.hbm.util.Reference;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
@@ -57,11 +60,19 @@ public class BlockBreakHandler {
 
        	// Ignore exhaustion/slowdown for ore?
        	Block block = event.getState().getBlock();
-       	if (block instanceof BlockOre) {
-       		if (MyConfig.aIgnoreOreFlag) {
-       			return;
-       		}
+       	
+        // no exhaustion for whitelist items.
+       	if (whiteListManager.whitelistHashSet.contains(block)) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new TextComponentString ("White list Block Broken: " + block.toString() +".  No exhaustion");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                player.sendMessage(component);
+        	}
+       		return;
        	}
+    	
+
 //        // Ignore Exhaustion for Ore if selected.
 //       	if (MyConfig.aIgnoreOreFlag) && (event.getState().withProperty(, value) getBlockHardness(event.getWorld(), event.getPos())) {
 //        	if (MyConfig.aDebugLevel > 1) {
@@ -99,7 +110,7 @@ public class BlockBreakHandler {
                 player.sendMessage(component);
         	}
         }
-    }
+    }	
 
 	@SubscribeEvent
 	public void blockBreakSpeed(PlayerEvent.BreakSpeed event) {
@@ -111,14 +122,31 @@ public class BlockBreakHandler {
 			return;
 		} 
 
-   		EntityPlayer p = event.getEntityPlayer();
-    	Item playerItem = p.getHeldItemMainhand().getItem();
-    	if (!playerItem.canHarvestBlock(event.getState(), p.getHeldItemMainhand())) {
-    		return;
-    	}
+   		EntityPlayer player = event.getEntityPlayer();
+    	Item playerItem = player.getHeldItemMainhand().getItem();
+    	boolean toolHarvestsBlockFaster = false;
+    	float os = event.getOriginalSpeed();
 
-       	// Ignore exhaustion for ore?
+    	if (event.getOriginalSpeed() > 1.0f) {
+    		toolHarvestsBlockFaster = true;
+    	}
+    	
+//    	if (!playerItem.canHarvestBlock(event.getState(), player.getHeldItemMainhand())) {
+//    		return;
+//    	}
+
+       	// Ignore slowdown for ore and whitelist blocks?
        	Block block = event.getState().getBlock();
+        // no exhaustion for whitelist items.
+       	if (whiteListManager.whitelistHashSet.contains(block)) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new TextComponentString ("White list Block Breaking: " + block.toString() + " No speed change.");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                player.sendMessage(component);
+        	}
+       		return;
+       	}       	
        	if (block instanceof BlockOre) {
        		if (MyConfig.aIgnoreOreFlag) {
        			return;
@@ -129,15 +157,19 @@ public class BlockBreakHandler {
 
 		toolManager.toolItem toolInfo = 
         		toolManager.getToolInfo(playerItem.getRegistryName().toString(),
-        								p.dimension);
-        
-        if (event.getPos().getY() > toolInfo.getExhaustionY()) {
+        								player.dimension);
+ 
+		int altitude = event.getPos().getY();
+		if (altitude < 5) {
+			altitude = 5;
+		}
+        if (altitude > toolInfo.getExhaustionY()) {
         	return;
         }
         
         // Speed Factor Detriment Increases with Depth below exhaustion level.
     	depthBasedSpeedFactor = 1.0 -
-    				(event.getPos().getY()/toolInfo.getExhaustionY()) ;
+    				(altitude / toolInfo.getExhaustionY()) ;
 
     	IBlockState s = event.getState();
     	
@@ -148,7 +180,7 @@ public class BlockBreakHandler {
 		if (MyConfig.aDigSpeedModifier>1.0) {
 			newDestroySpeed = baseDestroySpeed - baseDestroySpeed * (float) depthBasedSpeedFactor;
 			newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
-			if (event.getPos().getY() < p.getPosition().getY()) {
+			if (event.getPos().getY() < player.getPosition().getY()) {
 				newDestroySpeed = newDestroySpeed / (float) MyConfig.aDownSpeedModifier;
 			}
 		}	
@@ -157,14 +189,14 @@ public class BlockBreakHandler {
 			event.setNewSpeed(newDestroySpeed);
 		}
  
-		if (MyConfig.aDebugLevel > 0) {
-			if (debugLimiter++ > 2) {
+		if (MyConfig.aDebugLevel > 1) {
+			if (debugLimiter++ > 5) {
 				System.out.println("Block Speed ! depthSpeedFactor:" + (depthBasedSpeedFactor * 100) + "%");
 				System.out.println("Block Speed ! Configured digSpeedModifer:" + (MyConfig.aDigSpeedModifier * 100) + "%");
 				System.out.println("Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed())+ "DigSpeedMod:"+ MyConfig.aDigSpeedModifier + ".");
 				if (MyConfig.aDebugLevel > 1) {
 		            ITextComponent component = new TextComponentString ("Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed()) + ".");
-		            p.sendMessage(component);
+		            player.sendMessage(component);
 		    	}
 				debugLimiter = 0;
 			}
