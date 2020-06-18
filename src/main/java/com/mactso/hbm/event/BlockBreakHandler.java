@@ -52,6 +52,8 @@ public class BlockBreakHandler {
        		return;
        	}
        	
+       	// normal exhaustion for white list items
+       	
         // normal exhaustion for ore blocks
        	Block block = event.getState().getBlock();
        	if (block instanceof OreBlock) {
@@ -116,20 +118,30 @@ public class BlockBreakHandler {
    		if (p.world.isRemote()) {
    			worldName = "client-remote ";
    		}
+   		
     	Item playerItem = p.getHeldItemMainhand().getItem();
-    	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
-    		return;
+//    	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
+//    		return;
+//    	}
+    	boolean toolHarvestsBlockFaster = false;
+    	float originalToolSpeed = event.getOriginalSpeed();
+
+    	if (originalToolSpeed > 1.0f) {
+    		toolHarvestsBlockFaster = true;
     	}
     	
         // normal mining speed for ore blocks?  default =  true.
        	Block block = event.getState().getBlock();
+        // no exhaustion for whitelist items. 
+       	// add this in later
+       	
+        // no exhaustion for ore block items.  
        	if (block instanceof OreBlock) {
        		if (MyConfig.aNormalOre) {
        			return;
        		}
        	}
     	
-
         Item item = p.getHeldItemMainhand().getItem();
 
         // no slowdown for soft items.
@@ -147,14 +159,19 @@ public class BlockBreakHandler {
 		ToolManager.toolItem toolInfo = 
         		ToolManager.getToolInfo(playerItem.getRegistryName().toString(),
         								p.dimension.getId());
-        
-        if (event.getPos().getY() > toolInfo.getExhaustionY()) {
+
+		int altitude = event.getPos().getY();
+		if (altitude < 5) {
+			altitude = 5;  // cubic chunks compatibility
+		}
+        // altitude above where tool exhaustion starts.
+        if (altitude > toolInfo.getExhaustionY()) {
         	return;
         }
         
         // Speed Factor Detriment Increases with Depth below exhaustion level.
     	depthBasedSpeedFactor = 1.0 -
-    				(event.getPos().getY()/toolInfo.getExhaustionY()) ;
+    				(altitude/toolInfo.getExhaustionY()) ;
 
     	BlockState s = event.getState();
     	
@@ -165,7 +182,8 @@ public class BlockBreakHandler {
 		if (MyConfig.aDigSpeedModifier>1.0) {
 			newDestroySpeed = baseDestroySpeed - baseDestroySpeed * (float) depthBasedSpeedFactor;
 			newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
-			if (event.getPos().getY() < p.getPosition().getY()) {
+			// Optionally slower digging blocks lower than player feet.
+			if (altitude < p.getPosition().getY()) {
 				newDestroySpeed = newDestroySpeed / (float) MyConfig.aDownSpeedModifier;
 			}
 		}
@@ -176,7 +194,7 @@ public class BlockBreakHandler {
 		}
  
 		if (MyConfig.aDebugLevel > 0) {
-			if (debugLimiter++ > 2) {
+			if (debugLimiter++ > 5) {
 				System.out.println("dbgL:"+MyConfig.aDebugLevel
 						 +" exT:"+MyConfig.aExhaustionType
 						 +" DSM:" + MyConfig.aDigSpeedModifier);
