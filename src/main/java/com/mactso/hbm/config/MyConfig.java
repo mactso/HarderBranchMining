@@ -24,7 +24,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod.EventBusSubscriber
 public class MyConfig
 {
-	
+	@Ignore
+	public static final int EXHAUSTION_DISABLED = 0;
+	@Ignore
+	public static final int EXHAUSTION_DEPTH = 1;	
+	@Ignore
+	public static final int EXHAUSTION_FIXED = 2;
+
 	@Ignore
 	public static double serverDigSpeed = 1.0;
 
@@ -34,9 +40,9 @@ public class MyConfig
 	@Ignore
 	public static boolean serverSide = false;
 	
-	@Comment ( { "Exhaustion Type" } )
-	@Name ("Exhaustion Type : 0 = Fixed, 1 = Proportional to Depth")
-	@RangeInt (min=0, max=1)
+	@Comment ( { "Exhaustion Type : 0=No Hunger, 1=Depth Proportional Hunger & Speed, 2=Fixed Hunger & Speed" } )
+	@Name ("Exhaustion Type 0,1,2")
+	@RangeInt (min=0, max=2)
 	public static int aExhaustionType = 1;
 
 	@Comment ( { "Depth Dig Speed Modifier" } )
@@ -49,9 +55,9 @@ public class MyConfig
 	@RangeDouble (min=1.0, max=11.0)
 	public static double aDownSpeedModifier = 1.03;	
 
-	@Comment ( { "Ignore Ore?" } )
-	@Name ("True: Ignore, False: Exhausting & Slow Ore")
-	public static boolean aIgnoreOreFlag = true;		
+	@Comment ( { "Normal Ore Speed?" } )
+	@Name ("True: Normal, False: Exhausting & Slow Ore")
+	public static boolean aNormalOreHandling = true;		
 	
 	@Comment ( { "Print Debugging Messages to Log" } )
 	@Name ( "Log Debugging: 0=minimal, 1= log, 2 = log + chat" )
@@ -60,7 +66,7 @@ public class MyConfig
 
 	@Comment ( { "\"Tool Values: mod:tool, Dimension #, ExhaustionMaxY(5-255), Exhaustion Amount(0-40)" } )
 	@Name ( "Tool Values: mod:tool, Dim, Height, Exhaustion" )
-	public static String [] defaultTools= 
+	public static String [] aDefaultTools= 
 	{	    "hbm:default,0,48,10",
 			"Minecraft:torch,0,48,0.01",
 			"minecraft:wooden_pickaxe,0,48,8.0",
@@ -84,7 +90,7 @@ public class MyConfig
  
 	@Comment ( { "\"Whitelist Blocks: Mod:Block" } )
 	@Name ( "Whitelist Blocks : Mod: Block" )
-	public static String [] whiteList= 
+	public static String [] aBlocksWhiteList= 
 	{	    "ore_stone_variants:coal_ore",
 			"ore_stone_variants:iron_ore",
 			"ore_stone_variants:gold_ore",

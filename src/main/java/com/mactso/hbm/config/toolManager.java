@@ -25,9 +25,9 @@ public class toolManager {
 	public static void toolInit () {
 		int i = 0;
 		toolHashtable.clear();
-		while (i < MyConfig.defaultTools.length) {
+		while (i < MyConfig.aDefaultTools.length) {
 			try {
-				StringTokenizer st = new StringTokenizer(MyConfig.defaultTools[i], ",");
+				StringTokenizer st = new StringTokenizer(MyConfig.aDefaultTools[i], ",");
 				String key = st.nextToken() + ":" + st.nextToken();
 				double tExhaustionY = Double.parseDouble(st.nextToken());
 				if ((tExhaustionY < 5.0) || (tExhaustionY > 255.0)) {
@@ -41,7 +41,7 @@ public class toolManager {
 				toolHashtable.put(key, new toolItem (tExhaustionY, tExhaustionAmt));
 			}
 			catch (Exception e) {
-				System.out.println("HarderBranchMining: Bad Tool Config : " + MyConfig.defaultTools[i]);
+				System.out.println("HarderBranchMining: Bad Tool Config : " + MyConfig.aDefaultTools[i]);
 			}
 			i++;
 		}

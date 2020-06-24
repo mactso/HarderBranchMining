@@ -8,6 +8,7 @@ import com.mactso.hbm.config.whiteListManager;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,8 +29,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class BlockBreakHandler {
-	private static final int EXHAUSTION_FIXED = 0;
-	private static final int EXHAUSTION_DEPTH = 1;
+
 	private static int debugLimiter = 0;
 
 	@SubscribeEvent
@@ -47,6 +47,18 @@ public class BlockBreakHandler {
         EntityPlayer player = event.getPlayer();
     	Item tempItem = player.getHeldItemMainhand().getItem();
 
+        // no exhaustion (extra hunger) - just speed adjustment.
+    	
+       	if (MyConfig.aExhaustionType == MyConfig.EXHAUSTION_DISABLED) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new TextComponentString ("Exhaustion (Hunger) disabled");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                player.sendMessage(component);
+        	}
+       		return;
+       	}    	
+    	
         // no exhaustion for soft items.
        	if (1 >= event.getState().getBlockHardness(event.getWorld(), event.getPos())) {
         	if (MyConfig.aDebugLevel > 1) {
@@ -60,6 +72,19 @@ public class BlockBreakHandler {
 
        	// Ignore exhaustion/slowdown for ore?
        	Block block = event.getState().getBlock();
+       	
+       	// Normal ore with no exhaustion (to encourage caving)
+       	if ((block instanceof BlockRedstoneOre) ||(block instanceof BlockOre)) {
+       		if (MyConfig.aNormalOreHandling) {
+            	if (MyConfig.aDebugLevel > 1) {
+                    ITextComponent component = 
+                    		new TextComponentString ("Normal Ore with Normal Ore Handling Break: " + block.toString() +".  No exhaustion");
+                    component.getStyle().setColor(TextFormatting.GREEN);
+                    player.sendMessage(component);
+            	}
+       			return;
+       		}
+       	}
        	
         // no exhaustion for whitelist items.
        	if (whiteListManager.whitelistHashSet.contains(block)) {
@@ -92,7 +117,7 @@ public class BlockBreakHandler {
         if (depthBasedExhaustionFactor < 0)
         	return;
         else {
-        	if (MyConfig.aExhaustionType == EXHAUSTION_DEPTH) {
+        	if (MyConfig.aExhaustionType == MyConfig.EXHAUSTION_DEPTH) {
         		depthBasedExhaustionFactor = depthBasedExhaustionFactor / toolInfo.getExhaustionY();
         	} else { // EXHAUSTION_FIXED
         		depthBasedExhaustionFactor = 1.0;
@@ -146,9 +171,11 @@ public class BlockBreakHandler {
                 player.sendMessage(component);
         	}
        		return;
-       	}       	
-       	if (block instanceof BlockOre) {
-       		if (MyConfig.aIgnoreOreFlag) {
+       	}   
+       	
+       	// Normal ore with no exhaustion (to encourage caving)
+       	if ((block instanceof BlockRedstoneOre) ||(block instanceof BlockOre)) {
+       		if (MyConfig.aNormalOreHandling) {
        			return;
        		}
        	}
@@ -159,11 +186,13 @@ public class BlockBreakHandler {
         		toolManager.getToolInfo(playerItem.getRegistryName().toString(),
         								player.dimension);
  
+		// Cubic Chunks patch
 		int altitude = event.getPos().getY();
 		if (altitude < 5) {
 			altitude = 5;
 		}
-        if (altitude > toolInfo.getExhaustionY()) {
+
+		if (altitude > toolInfo.getExhaustionY()) {
         	return;
         }
         
