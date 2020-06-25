@@ -5,6 +5,7 @@ modId="hbm"
 version="${file.jarVersion}"
 displayName="Harder Branch Mining Mod"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/harder-branch-mining"
+updateJSONURL="https://github.com/mactso/HarderBranchMining/raw/master/update.json"
 logoFile="HBM-Logo.png"
 authors="MacTso, Lupicus"
 description='''Harder Branch Mining Mod.'''

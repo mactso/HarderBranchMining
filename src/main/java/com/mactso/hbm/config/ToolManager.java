@@ -13,10 +13,30 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ToolManager {
+	public static class toolItem {
+		double toolExhaustionY;
+		double toolExhaustionAmount;
+
+		public toolItem(double toolExhaustionY, double toolExhaustionAmount) {
+			this.toolExhaustionY = toolExhaustionY;
+			this.toolExhaustionAmount = toolExhaustionAmount;
+		}
+
+		public double getExhaustionAmt() {
+			return toolExhaustionAmount;
+		}
+
+		public double getExhaustionY() {
+			return toolExhaustionY;
+		}
+
+	}
 	public static Hashtable<String, toolItem> toolHashtable = new Hashtable<>();
 	private static String defaultToolString = "hbm:default";
 	private static int defaultToolDimensionID = 0; // OVERWORLD
+
 	private static String defaultToolKey = defaultToolString + ":" + defaultToolDimensionID;
+
 
 	public static toolItem getToolInfo(String key, int dimensionID) {
 		String iKey = key + ":" + dimensionID;
@@ -36,29 +56,28 @@ public class ToolManager {
 		return t;
 	}
 
-
 	public static void toolInit() {
 		
 		List <String> dTL6464 = new ArrayList<>();
 		
 		int i = 0;
-		String toolLine6464 = "";
+		String tmpToolLine6464 = "";
 		// Issue 6464 patch.
-		StringTokenizer st6464 = new StringTokenizer(MyConfig.defaultTools6464, ";");
+		StringTokenizer st6464 = new StringTokenizer(MyConfig.aDefaultTools6464, ";");
 		while (st6464.hasMoreElements()) {
-			toolLine6464 = st6464.nextToken().trim();
-			if (toolLine6464.isEmpty()) continue;
-			dTL6464.add(toolLine6464);  
+			tmpToolLine6464 = st6464.nextToken().trim();
+			if (tmpToolLine6464.isEmpty()) continue;
+			dTL6464.add(tmpToolLine6464);  
 			i++;
 		}
 
-		MyConfig.defaultTools = dTL6464.toArray(new String[i]);
+		MyConfig.aDefaultTools = dTL6464.toArray(new String[i]);
 		
 		i = 0;
 		toolHashtable.clear();
-		while (i < MyConfig.defaultTools.length) {
+		while (i < MyConfig.aDefaultTools.length) {
 			try {
-				StringTokenizer st = new StringTokenizer(MyConfig.defaultTools[i], ",");
+				StringTokenizer st = new StringTokenizer(MyConfig.aDefaultTools[i], ",");
 				String modAndTool = st.nextToken();
 				String key = modAndTool + ":" + st.nextToken(); //append dimension number.
 				
@@ -78,7 +97,7 @@ public class ToolManager {
 					System.out.println("HarderBranchMining: Tool: " + modAndTool + " not in Forge Registry.  Mispelled?");
 				}
 			} catch (Exception e) {
-				System.out.println("HarderBranchMining: Bad Tool Config : " + MyConfig.defaultTools[i]);
+				System.out.println("HarderBranchMining: Bad Tool Config : " + MyConfig.aDefaultTools[i]);
 			}
 			i++;
 		}
@@ -87,25 +106,6 @@ public class ToolManager {
 			double tExhaustionY = 48.0;
 			double tExhaustionAmt = 10.0;
 			toolHashtable.put(defaultToolKey, new toolItem(tExhaustionY, tExhaustionAmt));
-		}
-
-	}
-
-	public static class toolItem {
-		double toolExhaustionY;
-		double toolExhaustionAmount;
-
-		public toolItem(double toolExhaustionY, double toolExhaustionAmount) {
-			this.toolExhaustionY = toolExhaustionY;
-			this.toolExhaustionAmount = toolExhaustionAmount;
-		}
-
-		public double getExhaustionY() {
-			return toolExhaustionY;
-		}
-
-		public double getExhaustionAmt() {
-			return toolExhaustionAmount;
 		}
 
 	}

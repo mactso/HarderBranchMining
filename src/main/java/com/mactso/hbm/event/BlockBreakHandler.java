@@ -1,12 +1,14 @@
 //1.15.2-2.0.0.3
 package com.mactso.hbm.event;
 
+import com.mactso.hbm.config.ManagerBlocksWhiteList;
 import com.mactso.hbm.config.MyConfig;
 import com.mactso.hbm.config.ToolManager;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.OreBlock;
+import net.minecraft.block.RedstoneOreBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,6 +16,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,13 +25,19 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber()
 public class BlockBreakHandler {
-	private static final int EXHAUSTION_FIXED = 0;
-	private static final int EXHAUSTION_DEPTH = 1;
+	
 	private static int debugLimiter = 0;
 	
     @SubscribeEvent
     public void blockBreak(BlockEvent.BreakEvent event) {   
 
+    	if (MyConfig.aExhaustionType == MyConfig.EXHAUSTION_OFF) {
+    		if (MyConfig.aDebugLevel > 0) {
+				System.out.println("Exhaustion is turned off");
+   			}
+    		return;
+    	}
+    	
 		if (event.getPlayer()==null) {
 			return;
 		} else if (event.getPlayer().isCreative()) {
@@ -52,12 +61,28 @@ public class BlockBreakHandler {
        		return;
        	}
        	
-       	// normal exhaustion for white list items
+
+       	Block block = event.getState().getBlock();
+        // no exhaustion for whitelist items. 
+       	if (ManagerBlocksWhiteList.whitelistHashSet.contains(block)) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new StringTextComponent ("Block Broken! Whitelist Block.  No Exhaustion.");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                p.sendMessage(component);
+        	}   
+       		return;
+       	}
        	
         // normal exhaustion for ore blocks
-       	Block block = event.getState().getBlock();
-       	if (block instanceof OreBlock) {
-       		if (MyConfig.aNormalOre) {
+       	if ((block instanceof RedstoneOreBlock) || (block instanceof OreBlock)) {
+       		if (MyConfig.aNormalOreHandling) {
+            	if (MyConfig.aDebugLevel > 1) {
+                    ITextComponent component = 
+                    		new StringTextComponent ("Normal Ore Block broken normally.");
+                    component.getStyle().setColor(TextFormatting.GREEN);
+                    p.sendMessage(component);
+            	}   
        			return;
        		}
        	}
@@ -75,7 +100,7 @@ public class BlockBreakHandler {
         if (depthBasedExhaustionFactor < 0)
         	return;
         else {
-        	if (MyConfig.aExhaustionType == EXHAUSTION_DEPTH) {
+        	if (MyConfig.aExhaustionType == MyConfig.EXHAUSTION_DEPTH) {
         		depthBasedExhaustionFactor = depthBasedExhaustionFactor / toolInfo.getExhaustionY();
         	} else { // EXHAUSTION_FIXED
         		depthBasedExhaustionFactor = 1.0;
@@ -133,11 +158,33 @@ public class BlockBreakHandler {
         // normal mining speed for ore blocks?  default =  true.
        	Block block = event.getState().getBlock();
         // no exhaustion for whitelist items. 
-       	// add this in later
-       	
+       	if (ManagerBlocksWhiteList.whitelistHashSet.contains(block)) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new StringTextComponent ("Breaking Whitelist Block.  Not slower.");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                p.sendMessage(component);
+        	}   
+       		return;
+       	}
+       	// test
+       	if (Tags.Blocks.ORES.contains(block)) {
+        	if (MyConfig.aDebugLevel > 1) {
+                ITextComponent component = 
+                		new StringTextComponent (block.getTranslationKey().toString() + " is in the Ore block tags.");
+                component.getStyle().setColor(TextFormatting.GREEN);
+                p.sendMessage(component);
+        	}          		
+       	}
         // no exhaustion for ore block items.  
-       	if (block instanceof OreBlock) {
-       		if (MyConfig.aNormalOre) {
+       	if ((block instanceof RedstoneOreBlock) || (block instanceof OreBlock)) {
+       		if (MyConfig.aNormalOreHandling) {
+            	if (MyConfig.aDebugLevel > 1) {
+                    ITextComponent component = 
+                    		new StringTextComponent ("Normal Ore Block breaking and no speed adjust true.");
+                    component.getStyle().setColor(TextFormatting.GREEN);
+                    p.sendMessage(component);
+            	}   
        			return;
        		}
        	}
@@ -153,7 +200,8 @@ public class BlockBreakHandler {
         		return;
         	}
         }
-    	
+        
+       
         // key = moddomain:tool,dimension
 
 		ToolManager.toolItem toolInfo = 
