@@ -1,13 +1,14 @@
 //1.15.2
 package com.mactso.hbm.config;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mactso.hbm.Main;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -108,7 +109,9 @@ public class MyConfig
 			builder.pop();
 
 		}
+
 	}
+	
 	public static final Server SERVER;
 	public static final ForgeConfigSpec SERVER_SPEC;
 
@@ -127,9 +130,33 @@ public class MyConfig
 	public static String    aDefaultTools6464;
 	public static String[]  aDefaultBlocksWhitelist;
 	public static String    aDefaultBlocksWhitelist6464;
+	public static final Boolean BOLD = true;
 	public static final int EXHAUSTION_OFF   = 0;
 	public static final int EXHAUSTION_DEPTH = 1;
 	public static final int EXHAUSTION_FIXED = 2;
+
+    // for this mod- default color is green.
+	public static void sendChat(PlayerEntity p, String chatMessage) {
+		StringTextComponent component = new StringTextComponent (chatMessage);
+		// set to Dark Green Bold
+		Style chatStyle = Style.field_240709_b_.func_240712_a_(TextFormatting.DARK_GREEN);
+		p.sendMessage(component.func_230530_a_(chatStyle) , p.getUniqueID());
+	}
+
+	// support for any color chattext
+	public static void sendChat(PlayerEntity p, String chatMessage, TextFormatting textColor) {
+		StringTextComponent component = new StringTextComponent (chatMessage);
+		Style chatStyle = Style.field_240709_b_.func_240712_a_(textColor);
+		p.sendMessage(component.func_230530_a_(chatStyle) , p.getUniqueID());
+	}
+	
+	// support for any color, optionally bold text.
+	public static void sendChat(PlayerEntity p, String chatMessage, TextFormatting textColor, boolean boldText) {
+		StringTextComponent component = new StringTextComponent (chatMessage);
+		// set to Dark Green Bold
+		Style chatStyle = Style.field_240709_b_.func_240712_a_(textColor).func_240713_a_(boldText);
+		p.sendMessage(component.func_230530_a_(chatStyle) , p.getUniqueID());
+	}
 	
 	public static void bakeConfig()
 	{
@@ -167,6 +194,6 @@ public class MyConfig
 		SERVER.downExhaustion.set( MyConfig.aDownSpeedModifier);
 		SERVER.normalOre.set( MyConfig.aNormalOreHandling);
 	}
-	
+
 }
 

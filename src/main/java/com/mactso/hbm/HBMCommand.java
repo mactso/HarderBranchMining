@@ -3,16 +3,12 @@ package com.mactso.hbm;
 import com.mactso.hbm.config.MyConfig;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -60,23 +56,20 @@ public class HBMCommand {
 			)
 			)
 		.then(Commands.literal("info").executes(ctx -> {
-					ServerPlayerEntity p = ctx.getSource().asPlayer();
-					World worldName = p.world;
-		            ITextComponent component = new StringTextComponent (worldName.getDimension().getType().getRegistryName() 
-		            		+ "\n Current Values");
-		            component.applyTextStyle(TextFormatting.BOLD);
-		            component.applyTextStyle(TextFormatting.DARK_GREEN);
-		            p.sendMessage(component);
-		            component = new StringTextComponent (
+					ServerPlayerEntity serverPlayerEntity = ctx.getSource().asPlayer();
+					World worldName = serverPlayerEntity.world;
+					String chatMessage = worldName.func_234923_W_().toString() 
+										+ "\n Current Values";
+					MyConfig.sendChat(serverPlayerEntity, chatMessage, TextFormatting.DARK_GREEN, MyConfig.BOLD);
+					Style chatStyle = Style.field_240709_b_.func_240712_a_(TextFormatting.DARK_GREEN).func_240713_a_(true);
+		            chatMessage = 
 		              		  "\n  Exhaustion Type.: " + MyConfig.aExhaustionType
 		            		+ "\n  Debug Level...........: " + MyConfig.aDebugLevel
 		            		+ "\n  Dig Modifier.............: " + MyConfig.aDigSpeedModifier
 		            		+ "\n  Down Modifier........: " + MyConfig.aDownSpeedModifier
-		            		);
-		            component.applyTextStyle(TextFormatting.DARK_GREEN);
-		            p.sendMessage(component);
-					return 1;
-					// return 1;
+		            		;
+					MyConfig.sendChat(serverPlayerEntity, chatMessage);
+		            return 1;
 			}
 			)
 			)		

@@ -3,13 +3,11 @@ package com.mactso.hbm.config;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.AirBlock;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
