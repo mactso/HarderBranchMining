@@ -2,6 +2,7 @@
 package com.mactso.hbm;
 
 import com.mactso.hbm.config.MyConfig;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import com.mactso.hbm.event.BlockBreakHandler;
 import com.mactso.hbm.config.ToolManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -35,13 +36,17 @@ public class Main
 		System.out.println("HarderBranchMining: Registering Handler");
 		MinecraftForge.EVENT_BUS.register(new BlockBreakHandler ());
 		
-	}       
+	}
+	
+	@SubscribeEvent 		
+	public void onCommandsRegistry(final RegisterCommandsEvent event) {
+		HBMCommand.register(event.getDispatcher());			
+	}
 
 	// in 14.4 and later, config file loads when the server starts when the world starts.
 	@SubscribeEvent 
 	public void onServerStarting (FMLServerStartingEvent event) {
 		
 		ToolManager.toolInit();
-		HBMCommand.register(event.getCommandDispatcher());
 	}
 }
