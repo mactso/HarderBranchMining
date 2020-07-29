@@ -1,9 +1,6 @@
 {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/harder-branch-mining",
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/poor-golem",
     "promos": {
-        "1.12.2-latest": "2.0.0.10",
-        "1.14.4-latest": "2.0.0.9",
-        "1.15.1-latest": "2.0.0.10",
-        "1.15.2-latest": "2.0.0.10"
+        "1.16.1-latest": "1.0.0.1"
     }
 }
