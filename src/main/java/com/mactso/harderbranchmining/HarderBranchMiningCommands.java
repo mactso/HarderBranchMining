@@ -1,6 +1,6 @@
-package com.mactso.hbm;
+package com.mactso.harderbranchmining;
 
-import com.mactso.hbm.config.MyConfig;
+import com.mactso.harderbranchmining.config.MyConfig;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -12,7 +12,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class HBMCommand {
+public class HarderBranchMiningCommands {
 	String subcommand = "";
 	String value = "";
 	

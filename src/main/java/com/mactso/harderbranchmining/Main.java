@@ -1,10 +1,12 @@
 //1.15.2
-package com.mactso.hbm;
+package com.mactso.harderbranchmining;
 
-import com.mactso.hbm.config.MyConfig;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import com.mactso.hbm.event.BlockBreakHandler;
-import com.mactso.hbm.config.ToolManager;
+
+import com.mactso.harderbranchmining.config.MyConfig;
+import com.mactso.harderbranchmining.config.ToolManager;
+import com.mactso.harderbranchmining.event.BlockBreakHandler;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -15,18 +17,16 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("hbm")
+@Mod("harderbranchmining")
 public class Main
 {
-    public static final String MODID = "hbm"; 
-	int i = 7;
+    public static final String MODID = "harderbranchmining"; 
     
     public Main()
     {
 
 		FMLJavaModLoadingContext.get().getModEventBus().register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER,MyConfig.SERVER_SPEC );
-		MinecraftForge.EVENT_BUS.register(this);
 		
     }
 
@@ -37,16 +37,20 @@ public class Main
 		MinecraftForge.EVENT_BUS.register(new BlockBreakHandler ());
 		
 	}
-	
-	@SubscribeEvent 		
-	public void onCommandsRegistry(final RegisterCommandsEvent event) {
-		HBMCommand.register(event.getDispatcher());			
-	}
 
-	// in 14.4 and later, config file loads when the server starts when the world starts.
-	@SubscribeEvent 
-	public void onServerStarting (FMLServerStartingEvent event) {
-		
-		ToolManager.toolInit();
-	}
+    @Mod.EventBusSubscriber()
+    public static class ForgeEvents
+    {
+		@SubscribeEvent 		
+		public static void onCommandsRegistry(final RegisterCommandsEvent event) {
+			System.out.println("HarderBranchMining: Registering Commands");
+			HarderBranchMiningCommands.register(event.getDispatcher());			
+		}
+
+		@SubscribeEvent 
+		public static void onServerStarting (FMLServerStartingEvent event) {
+			System.out.println("HarderBranchMining: Initializing Toolmanager");
+			ToolManager.toolInit();
+		}
+    }
 }

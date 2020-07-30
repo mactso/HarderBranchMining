@@ -1,5 +1,5 @@
 //1.15.2 
-package com.mactso.hbm.config;
+package com.mactso.harderbranchmining.config;
 
 import java.util.ArrayList;
 import java.util.HashSet;

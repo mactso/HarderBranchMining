@@ -1,11 +1,11 @@
 //1.15.2-2.0.0.3
-package com.mactso.hbm.event;
+package com.mactso.harderbranchmining.event;
 
 
 
-import com.mactso.hbm.config.ManagerBlocksWhiteList;
-import com.mactso.hbm.config.MyConfig;
-import com.mactso.hbm.config.ToolManager;
+import com.mactso.harderbranchmining.config.ManagerBlocksWhiteList;
+import com.mactso.harderbranchmining.config.MyConfig;
+import com.mactso.harderbranchmining.config.ToolManager;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

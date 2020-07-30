@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="[32,)"
 [[mods]]
-modId="hbm"
+modId="harderbranchmining"
 version="${file.jarVersion}"
 displayName="Harder Branch Mining Mod"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/harder-branch-mining"

@@ -1,9 +1,9 @@
 //1.15.2
-package com.mactso.hbm.config;
+package com.mactso.harderbranchmining.config;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.mactso.hbm.Main;
+import com.mactso.harderbranchmining.Main;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
