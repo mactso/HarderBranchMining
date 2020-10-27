@@ -1,13 +1,14 @@
 //1.15.2
 package com.mactso.harderbranchmining.config;
 
+import net.minecraft.util.text.Color;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mactso.harderbranchmining.Main;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -21,7 +22,7 @@ import net.minecraftforge.fml.config.ModConfig;
 @Mod.EventBusSubscriber(modid = Main.MODID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class MyConfig
 {
-	public static class Server
+	public static class Common
 	{
 		public final ConfigValue<String> toolsActual;
 		public final ConfigValue<String> blocksWhiteListActual;
@@ -33,25 +34,25 @@ public class MyConfig
 
 
 		public final String defaultTools6464 = 
-		  "hbm:default,0,48,10.0;"
-		+ "minecraft:torch,0,48,0.2;"		  
-	  	+ "minecraft:wooden_pickaxe,0,48,8.0;"
-		+ "minecraft:stone_pickaxe,0,48,4.0;"
-		+ "minecraft:iron_pickaxe,0,48,2.0;"
-		+ "minecraft:golden_pickaxe,0,48,1.5;"
-		+ "minecraft:diamond_pickaxe,0,48,1.0;"
-		+ "minecraft:wooden_shovel,0,48,8.0;"
-		+ "minecraft:stone_shovel,0,48,4.0;"
-		+ "minecraft:iron_shovel,0,48,2.0;"
-		+ "minecraft:golden_shovel,0,48,1.5;"
-		+ "minecraft:diamond_shovel,0,48,1.0;"
-		+ "minecraft:wooden_axe,0,48,2.0;"
-		+ "minecraft:stone_axe,0,48,1.0;"
-		+ "minecraft:iron_axe,0,48,0.5;"
-		+ "minecraft:golden_axe,0,48,0.3;"
-		+ "minecraft:diamond_axe,0,48,0.25;"			
-		+ "minecraft:iron_pickaxe,-1,124,2.2;"
-		+ "minecraft:diamond_pickaxe,-1,124,1.2;"
+		  "hbm:default,hbm:default_dimension,48,10.0;"
+		+ "minecraft:torch,minecraft:overworld,48,0.2;"		  
+	  	+ "minecraft:wooden_pickaxe,minecraft:overworld,48,8.0;"
+		+ "minecraft:stone_pickaxe,minecraft:overworld,48,4.0;"
+		+ "minecraft:iron_pickaxe,minecraft:overworld,48,2.0;"
+		+ "minecraft:golden_pickaxe,minecraft:overworld,48,1.5;"
+		+ "minecraft:diamond_pickaxe,minecraft:overworld,48,1.0;"
+		+ "minecraft:wooden_shovel,minecraft:overworld,48,8.0;"
+		+ "minecraft:stone_shovel,minecraft:overworld,48,4.0;"
+		+ "minecraft:iron_shovel,minecraft:overworld,48,2.0;"
+		+ "minecraft:golden_shovel,minecraft:overworld,48,1.5;"
+		+ "minecraft:diamond_shovel,minecraft:overworld,48,1.0;"
+		+ "minecraft:wooden_axe,minecraft:overworld,48,2.0;"
+		+ "minecraft:stone_axe,minecraft:overworld,48,1.0;"
+		+ "minecraft:iron_axe,minecraft:overworld,48,0.5;"
+		+ "minecraft:golden_axe,minecraft:overworld,48,0.3;"
+		+ "minecraft:diamond_axe,minecraft:overworld,48,0.25;"			
+		+ "minecraft:iron_pickaxe,minecraft:the_nether,124,2.2;"
+		+ "minecraft:diamond_pickaxe,minecraft:the_nether,124,1.2;"
 		;		
 		public final String defaultBlocksWhiteList6464 = 
 				    "ore_stone_variants:coal_ore;"+
@@ -65,7 +66,7 @@ public class MyConfig
 					"minecraft:oak_fence;"
 			;	
 		
-		public Server(ForgeConfigSpec.Builder builder) {
+		public Common(ForgeConfigSpec.Builder builder) {
 
 			builder.push("Exhaustion Control Values");
 			exhaustionType= builder
@@ -112,14 +113,14 @@ public class MyConfig
 
 	}
 	
-	public static final Server SERVER;
-	public static final ForgeConfigSpec SERVER_SPEC;
+	public static final Common COMMON;
+	public static final ForgeConfigSpec COMMON_SPEC;
 
 	static
 	{
-		final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
-		SERVER_SPEC = specPair.getRight();
-		SERVER = specPair.getLeft();
+		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+		COMMON_SPEC = specPair.getRight();
+		COMMON = specPair.getLeft();
 	}
 	public static int       aExhaustionType;
 	public static int       aDebugLevel;
@@ -136,37 +137,42 @@ public class MyConfig
 	public static final int EXHAUSTION_FIXED = 2;
 
     // for this mod- default color is green.
+	// support for any color chattext
 	public static void sendChat(PlayerEntity p, String chatMessage) {
 		StringTextComponent component = new StringTextComponent (chatMessage);
-		// set to Dark Green Bold
-		Style chatStyle = Style.field_240709_b_.func_240712_a_(TextFormatting.DARK_GREEN);
-		p.sendMessage(component.func_230530_a_(chatStyle) , p.getUniqueID());
+		component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.GRAY));
+		p.sendMessage(component, p.getUniqueID());
 	}
+
 
 	// support for any color chattext
 	public static void sendChat(PlayerEntity p, String chatMessage, TextFormatting textColor) {
 		StringTextComponent component = new StringTextComponent (chatMessage);
-		Style chatStyle = Style.field_240709_b_.func_240712_a_(textColor);
-		p.sendMessage(component.func_230530_a_(chatStyle) , p.getUniqueID());
+		component.getStyle().setColor(Color.fromTextFormatting(textColor));
+		p.sendMessage(component, p.getUniqueID());
 	}
 	
 	// support for any color, optionally bold text.
 	public static void sendChat(PlayerEntity p, String chatMessage, TextFormatting textColor, boolean boldText) {
 		StringTextComponent component = new StringTextComponent (chatMessage);
 		// set to Dark Green Bold
-		Style chatStyle = Style.field_240709_b_.func_240712_a_(textColor).func_240713_a_(boldText);
-		p.sendMessage(component.func_230530_a_(chatStyle) , p.getUniqueID());
+		if (boldText) {
+			component.getStyle().setBold(true);
+		}
+		component.getStyle().setColor(Color.fromTextFormatting(textColor));
+
+		p.sendMessage(component, p.getUniqueID());
 	}
 	
 	public static void bakeConfig()
 	{
-		aExhaustionType = SERVER.exhaustionType.get();
-		aDebugLevel = SERVER.debugLevel.get();
-		aDigSpeedModifier = SERVER.digSpeedModifier.get();
-		aDownSpeedModifier = SERVER.downExhaustion.get();
-		aNormalOreHandling = SERVER.normalOre.get();		
-		aDefaultTools6464 = SERVER.toolsActual.get() ;
-		aDefaultBlocksWhitelist6464 = SERVER.blocksWhiteListActual.get() ;
+		aExhaustionType = COMMON.exhaustionType.get();
+		aDebugLevel = COMMON.debugLevel.get();
+		aDigSpeedModifier = COMMON.digSpeedModifier.get();
+		aDownSpeedModifier = COMMON.downExhaustion.get();
+		aNormalOreHandling = COMMON.normalOre.get();		
+		aDefaultTools6464 = COMMON.toolsActual.get() ;
+		aDefaultBlocksWhitelist6464 = COMMON.blocksWhiteListActual.get() ;
 		System.out.println("HarderBranchMiningConfig Type:" + aExhaustionType + ", Debug Level:" + aDebugLevel);
 
 	}
@@ -174,7 +180,7 @@ public class MyConfig
 	@SubscribeEvent
 	public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent)
 	{
-		if (configEvent.getConfig().getSpec() == MyConfig.SERVER_SPEC)
+		if (configEvent.getConfig().getSpec() == MyConfig.COMMON_SPEC)
 		{
 			bakeConfig();
 			ToolManager.toolInit();
@@ -188,11 +194,11 @@ public class MyConfig
 						 +" DigSM:" + MyConfig.aDigSpeedModifier
 						 +" DwnSM:" + MyConfig.aDownSpeedModifier
 						 +" NmOre:" + MyConfig.aNormalOreHandling );
-		SERVER.debugLevel.set( MyConfig.aDebugLevel);
-		SERVER.exhaustionType.set( MyConfig.aExhaustionType);
-		SERVER.digSpeedModifier.set( MyConfig.aDigSpeedModifier);
-		SERVER.downExhaustion.set( MyConfig.aDownSpeedModifier);
-		SERVER.normalOre.set( MyConfig.aNormalOreHandling);
+		COMMON.debugLevel.set( MyConfig.aDebugLevel);
+		COMMON.exhaustionType.set( MyConfig.aExhaustionType);
+		COMMON.digSpeedModifier.set( MyConfig.aDigSpeedModifier);
+		COMMON.downExhaustion.set( MyConfig.aDownSpeedModifier);
+		COMMON.normalOre.set( MyConfig.aNormalOreHandling);
 	}
 
 }

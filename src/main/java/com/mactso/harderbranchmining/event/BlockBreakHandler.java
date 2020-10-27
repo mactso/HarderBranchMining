@@ -13,8 +13,10 @@ import net.minecraft.block.OreBlock;
 import net.minecraft.block.RedstoneOreBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -50,6 +52,7 @@ public class BlockBreakHandler {
         //Item item = p.getHeldItemMainhand().getItem();
 
         // no exhaustion for soft items.
+        float hardness = event.getState().getBlockHardness(event.getWorld(), event.getPos());
        	if (1 >= event.getState().getBlockHardness(event.getWorld(), event.getPos())) {
         	if (MyConfig.aDebugLevel > 1) {
 				MyConfig.sendChat(p, "Block Broken! Soft Block.  No Exhaustion.");                
@@ -83,9 +86,10 @@ public class BlockBreakHandler {
         Item tempItem = event.getPlayer().getHeldItemMainhand().getItem();
         
         // domain:tool:dimension
-        DimensionType dimensionType = p.world.func_230315_m_();
-        int dimensionNumber = dimensionType.func_241513_m_();
-        ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName().toString(),dimensionNumber);
+        DimensionType dimensionType = p.world.getDimensionType();
+        RegistryKey<World> dimensionKey = p.world.getDimensionKey();
+        String dimensionId = dimensionKey.getLocation().toString();
+        ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName().toString(),dimensionId);
          
         depthBasedExhaustionFactor = toolInfo.getExhaustionY() - event.getPos().getY();
 
@@ -104,12 +108,12 @@ public class BlockBreakHandler {
         event.getPlayer().getFoodStats().addExhaustion((float) tempExhaustionAmount);
 
         if (MyConfig.aDebugLevel > 0) {
-        	System.out.println ("Block Broken! Player:" + p.getName() + ", Dimension:"+ p.world.func_234923_W_().toString() + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);      
+        	System.out.println ("Block Broken! Player:" + p.getName() + ", Dimension:"+ p.world.getDimensionType().toString() + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);      
         	if (MyConfig.aDebugLevel > 1) {
 
         		MyConfig.sendChat (p, "Block Broken! \n With "+ tempItem.getRegistryName().toString() 
                 				+" by Player:" + p.getGameProfile().getName() 
-                				+ "\n Dimension   :"+ p.world.func_234923_W_().func_240901_a_().toString() 
+                				+ "\n Dimension   :"+ dimensionId
                 				+ "\n Depth       :" + event.getPos().getY() 
                 				+ "\n Exhaustion:" + Math.round(tempExhaustionAmount * 1000.0) / 1000.0);
         	}
@@ -156,7 +160,7 @@ public class BlockBreakHandler {
        		return;
        	}
        	// f230235_a_ == ".contains()"
-       	if ((Tags.Blocks.ORES).func_230235_a_(block)) {
+       	if ((Tags.Blocks.ORES).contains(block)) {
         	if ((MyConfig.aDebugLevel > 1)&&(debugLimiter++ > 39)) {
         		MyConfig.sendChat(p,block.getTranslationKey().toString() + " is in the Ore block tags.");
 				debugLimiter = 0;
@@ -188,12 +192,12 @@ public class BlockBreakHandler {
        
         // key = moddomain:tool,dimension
 
-        DimensionType dimensionType = p.world.func_230315_m_();
-        int dimensionNumber = dimensionType.func_241513_m_();
+        DimensionType dimensionType = p.world.getDimensionType();
+        String dimensionId = dimensionType.getEffects().toString();
         
 		ToolManager.toolItem toolInfo = 
         		ToolManager.getToolInfo(playerItem.getRegistryName().toString(),
-        								dimensionNumber);
+        								dimensionId);
 
 		int altitude = event.getPos().getY();
 		if (altitude < 5) {

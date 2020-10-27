@@ -58,10 +58,9 @@ public class HarderBranchMiningCommands {
 		.then(Commands.literal("info").executes(ctx -> {
 					ServerPlayerEntity serverPlayerEntity = ctx.getSource().asPlayer();
 					World worldName = serverPlayerEntity.world;
-					String chatMessage = worldName.func_234923_W_().toString() 
+					String chatMessage = worldName.getDimensionKey().toString() 
 										+ "\n Current Values";
 					MyConfig.sendChat(serverPlayerEntity, chatMessage, TextFormatting.DARK_GREEN, MyConfig.BOLD);
-					Style chatStyle = Style.field_240709_b_.func_240712_a_(TextFormatting.DARK_GREEN).func_240713_a_(true);
 		            chatMessage = 
 		              		  "\n  Exhaustion Type.: " + MyConfig.aExhaustionType
 		            		+ "\n  Debug Level...........: " + MyConfig.aDebugLevel

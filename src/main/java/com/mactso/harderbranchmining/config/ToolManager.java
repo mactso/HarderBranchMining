@@ -30,12 +30,12 @@ public class ToolManager {
 	}
 	public static Hashtable<String, toolItem> toolHashtable = new Hashtable<>();
 	private static String defaultToolString = "hbm:default";
-	private static int defaultToolDimensionID = 0; // OVERWORLD
+	private static String defaultToolDimensionID = "hbm:default_dimension"; // OVERWORLD
 
 	private static String defaultToolKey = defaultToolString + ":" + defaultToolDimensionID;
 
 
-	public static toolItem getToolInfo(String key, int dimensionID) {
+	public static toolItem getToolInfo(String key, String dimensionID) {
 		String iKey = key + ":" + dimensionID;
 
 		if (toolHashtable.isEmpty()) {
@@ -44,7 +44,7 @@ public class ToolManager {
 
 		toolItem t = toolHashtable.get(iKey);
 		if (t == null) {
-			iKey = key + ":" + "0";
+			iKey = key + ":" + "minecraft:overworld";
 			t = toolHashtable.get(iKey);
 			if (t == null) {
 				t = toolHashtable.get(defaultToolKey);
@@ -76,7 +76,7 @@ public class ToolManager {
 			try {
 				StringTokenizer st = new StringTokenizer(MyConfig.aDefaultTools[i], ",");
 				String modAndTool = st.nextToken();
-				String key = modAndTool + ":" + st.nextToken(); //append dimension number.
+				String key = modAndTool + ":" + st.nextToken(); // append dimension id.
 				
 				double tExhaustionY = Double.parseDouble(st.nextToken());
 				if ((tExhaustionY < 5.0) || (tExhaustionY > 255.0)) {
