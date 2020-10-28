@@ -191,9 +191,12 @@ public class BlockBreakHandler {
         
        
         // key = moddomain:tool,dimension
-
         DimensionType dimensionType = p.world.getDimensionType();
-        String dimensionId = dimensionType.getEffects().toString();
+        RegistryKey<World> dimensionKey = p.world.getDimensionKey();
+        String dimensionId = dimensionKey.getLocation().toString();
+        
+//        DimensionType dimensionType = p.world.getDimensionType();
+//        String dimensionId = dimensionType.getEffects().toString();
         
 		ToolManager.toolItem toolInfo = 
         		ToolManager.getToolInfo(playerItem.getRegistryName().toString(),
