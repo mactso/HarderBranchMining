@@ -20,7 +20,7 @@ public class HarderBranchMiningCommands {
 	{
 		dispatcher.register(Commands.literal("hbm").requires((source) -> 
 			{
-				return source.hasPermissionLevel(2);
+				return source.hasPermission(2);
 			}
 		)
 		.then(Commands.literal("digSpeed").then(
@@ -56,9 +56,9 @@ public class HarderBranchMiningCommands {
 			)
 			)
 		.then(Commands.literal("info").executes(ctx -> {
-					ServerPlayerEntity serverPlayerEntity = ctx.getSource().asPlayer();
-					World worldName = serverPlayerEntity.world;
-					String chatMessage = worldName.getDimensionKey().toString() 
+					ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) ctx.getSource().getEntity();
+					World worldName = serverPlayerEntity.level;
+					String chatMessage = worldName.dimensionType().toString() 
 										+ "\n Current Values";
 					MyConfig.sendChat(serverPlayerEntity, chatMessage, TextFormatting.DARK_GREEN, MyConfig.BOLD);
 		            chatMessage = 

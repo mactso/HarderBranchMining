@@ -52,8 +52,9 @@ public class BlockBreakHandler {
         //Item item = p.getHeldItemMainhand().getItem();
 
         // no exhaustion for soft items.
-        float hardness = event.getState().getBlockHardness(event.getWorld(), event.getPos());
-       	if (1 >= event.getState().getBlockHardness(event.getWorld(), event.getPos())) {
+        
+        float hardness = event.getState().getDestroySpeed(event.getWorld(), event.getPos());
+       	if (1 >= event.getState().getDestroySpeed(event.getWorld(), event.getPos())) {
         	if (MyConfig.aDebugLevel > 1) {
 				MyConfig.sendChat(p, "Block Broken! Soft Block.  No Exhaustion.");                
         	}
@@ -83,12 +84,12 @@ public class BlockBreakHandler {
         
         // World debugWorldValue = (World) event.getWorld();
         // ItemStack debugItemStack = event.getPlayer().getHeldItemMainhand();
-        Item tempItem = event.getPlayer().getHeldItemMainhand().getItem();
+        Item tempItem = event.getPlayer().getMainHandItem().getItem();
         
         // domain:tool:dimension
-        DimensionType dimensionType = p.world.getDimensionType();
-        RegistryKey<World> dimensionKey = p.world.getDimensionKey();
-        String dimensionId = dimensionKey.getLocation().toString();
+        DimensionType dimensionType = p.level.dimensionType();
+        RegistryKey<World> dimensionKey = p.level.dimension();
+        String dimensionId = dimensionKey.location().toString();
         ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName().toString(),dimensionId);
          
         depthBasedExhaustionFactor = toolInfo.getExhaustionY() - event.getPos().getY();
@@ -105,10 +106,10 @@ public class BlockBreakHandler {
 
         tempExhaustionAmount = toolInfo.getExhaustionAmt() * depthBasedExhaustionFactor;
         
-        event.getPlayer().getFoodStats().addExhaustion((float) tempExhaustionAmount);
+        event.getPlayer().getFoodData().addExhaustion((float) tempExhaustionAmount);
 
         if (MyConfig.aDebugLevel > 0) {
-        	System.out.println ("Block Broken! Player:" + p.getName() + ", Dimension:"+ p.world.getDimensionType().toString() + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);      
+        	System.out.println ("Block Broken! Player:" + p.getName() + ", Dimension:"+ p.level.dimensionType().toString() + ", Pos:" + event.getPos() + ", tempExhaustionAmount:" + tempExhaustionAmount);      
         	if (MyConfig.aDebugLevel > 1) {
 
         		MyConfig.sendChat (p, "Block Broken! \n With "+ tempItem.getRegistryName().toString() 
@@ -135,11 +136,11 @@ public class BlockBreakHandler {
 		} 
 
    		PlayerEntity p = event.getPlayer();
-   		if (p.world.isRemote()) {
+   		if (p.level.isClientSide()) {
    			debugWorldName = "client-remote ";
    		}
    		
-    	Item playerItem = p.getHeldItemMainhand().getItem();
+    	Item playerItem = p.getMainHandItem().getItem();
 //    	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
 //    		return;
 //    	}
@@ -162,7 +163,7 @@ public class BlockBreakHandler {
        	// f230235_a_ == ".contains()"
        	if ((Tags.Blocks.ORES).contains(block)) {
         	if ((MyConfig.aDebugLevel > 1)&&(debugLimiter++ > 39)) {
-        		MyConfig.sendChat(p,block.getTranslationKey().toString() + " is in the Ore block tags.");
+        		MyConfig.sendChat(p,block.getDescriptionId().toString() + " is in the Ore block tags.");
 				debugLimiter = 0;
         	}          		
        	}
@@ -180,9 +181,9 @@ public class BlockBreakHandler {
         // Item debugItem = p.getHeldItemMainhand().getItem();
 
         // no slowdown for soft items.
-        if (p.getHeldItemMainhand().isEmpty()) {
+        if (p.getMainHandItem().isEmpty()) {
         	BlockState s = event.getState();
-        	double hardness = s.getBlockHardness(p.world, event.getPos());
+        	double hardness = s.getDestroySpeed(p.level, event.getPos());
         	// Block debugBlock = event.getState().getBlock();
         	if (hardness <= 1.0) {
         		return;
@@ -191,9 +192,9 @@ public class BlockBreakHandler {
         
        
         // key = moddomain:tool,dimension
-        DimensionType dimensionType = p.world.getDimensionType();
-        RegistryKey<World> dimensionKey = p.world.getDimensionKey();
-        String dimensionId = dimensionKey.getLocation().toString();
+        DimensionType dimensionType = p.level.dimensionType();
+        RegistryKey<World> dimensionKey = p.level.dimension();
+        String dimensionId = dimensionKey.location().toString();
         
 //        DimensionType dimensionType = p.world.getDimensionType();
 //        String dimensionId = dimensionType.getEffects().toString();
@@ -225,7 +226,7 @@ public class BlockBreakHandler {
 			newDestroySpeed = baseDestroySpeed - baseDestroySpeed * (float) depthBasedSpeedFactor;
 			newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
 			// Optionally slower digging blocks lower than player feet.
-			if (altitude < p.getPosY()) {
+			if (altitude < p.getY()) {
 				newDestroySpeed = newDestroySpeed / (float) MyConfig.aDownSpeedModifier;
 			}
 		}
@@ -243,13 +244,13 @@ public class BlockBreakHandler {
 				System.out.println("Breaking Block Speed ! depthSpeedFactor:" + (depthBasedSpeedFactor * 100) + "%");
 				System.out.println("Breaking Block Speed ! Configured digSpeedModifer: " + (MyConfig.aDigSpeedModifier * 100) + "%");
 				System.out.println("Breaking Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed())+ " DigSpeedMod:"+ MyConfig.aDigSpeedModifier + ".");
-				if (MyConfig.aDebugLevel > 1 && p.world.isRemote())  {
+				if (MyConfig.aDebugLevel > 1 && p.level.isClientSide())  {
 					String msg = "\n" + debugWorldName +" :  Breaking Block Speed ! \n Default Minecraft Digging Speed  : "+ baseDestroySpeed 
 							+ "\n Standard Digging Speed Modifier .:"+ MyConfig.aDigSpeedModifier 
 							+ "\n Modified Breaking Speed           .: " + (event.getNewSpeed()) 
 							+ "";
 					MyConfig.sendChat (p, msg);
-					if (altitude < p.getPosY ()) {
+					if (altitude < p.getY ()) {
 						msg = " Extra Downward Speed Modifier  .: " + MyConfig.aDownSpeedModifier;
 			            MyConfig.sendChat (p, msg, TextFormatting.YELLOW);
 					}

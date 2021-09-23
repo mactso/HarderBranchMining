@@ -50,6 +50,7 @@ public class ToolManager {
 				t = toolHashtable.get(defaultToolKey);
 			}
 		}
+
 		return t;
 	}
 

@@ -39,20 +39,23 @@ public class MyConfig
 	  	+ "minecraft:wooden_pickaxe,minecraft:overworld,48,8.0;"
 		+ "minecraft:stone_pickaxe,minecraft:overworld,48,4.0;"
 		+ "minecraft:iron_pickaxe,minecraft:overworld,48,2.0;"
-		+ "minecraft:golden_pickaxe,minecraft:overworld,48,1.5;"
-		+ "minecraft:diamond_pickaxe,minecraft:overworld,48,1.0;"
+		+ "minecraft:golden_pickaxe,minecraft:overworld,48,1.0;"
+		+ "minecraft:diamond_pickaxe,minecraft:overworld,48,1.2;"
+		+ "minecraft:netherite_pickaxe,minecraft:overworld,48,1.1;"
 		+ "minecraft:wooden_shovel,minecraft:overworld,48,8.0;"
 		+ "minecraft:stone_shovel,minecraft:overworld,48,4.0;"
 		+ "minecraft:iron_shovel,minecraft:overworld,48,2.0;"
-		+ "minecraft:golden_shovel,minecraft:overworld,48,1.5;"
-		+ "minecraft:diamond_shovel,minecraft:overworld,48,1.0;"
+		+ "minecraft:golden_shovel,minecraft:overworld,48,1.0;"
+		+ "minecraft:diamond_shovel,minecraft:overworld,48,1.2;"
+		+ "minecraft:netherite_shovel,minecraft:overworld,48,1.1;"
 		+ "minecraft:wooden_axe,minecraft:overworld,48,2.0;"
 		+ "minecraft:stone_axe,minecraft:overworld,48,1.0;"
-		+ "minecraft:iron_axe,minecraft:overworld,48,0.5;"
-		+ "minecraft:golden_axe,minecraft:overworld,48,0.3;"
-		+ "minecraft:diamond_axe,minecraft:overworld,48,0.25;"			
+		+ "minecraft:iron_axe,minecraft:overworld,48,2.0;"
+		+ "minecraft:golden_axe,minecraft:overworld,48,1.0;"
+		+ "minecraft:diamond_axe,minecraft:overworld,48,1.2;"			
+		+ "minecraft:netherite_axe,minecraft:overworld,48,1.1;"			
 		+ "minecraft:iron_pickaxe,minecraft:the_nether,124,2.2;"
-		+ "minecraft:diamond_pickaxe,minecraft:the_nether,124,1.2;"
+		+ "minecraft:netherite_pickaxe,minecraft:the_nether,124,1.0;"
 		;		
 		public final String defaultBlocksWhiteList6464 = 
 				    "ore_stone_variants:coal_ore;"+
@@ -140,16 +143,16 @@ public class MyConfig
 	// support for any color chattext
 	public static void sendChat(PlayerEntity p, String chatMessage) {
 		StringTextComponent component = new StringTextComponent (chatMessage);
-		component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.GRAY));
-		p.sendMessage(component, p.getUniqueID());
+		component.getStyle().withColor(Color.fromLegacyFormat(TextFormatting.GRAY));
+		p.sendMessage(component, p.getUUID());
 	}
 
 
 	// support for any color chattext
 	public static void sendChat(PlayerEntity p, String chatMessage, TextFormatting textColor) {
 		StringTextComponent component = new StringTextComponent (chatMessage);
-		component.getStyle().setColor(Color.fromTextFormatting(textColor));
-		p.sendMessage(component, p.getUniqueID());
+		component.getStyle().withColor(Color.fromLegacyFormat(textColor));
+		p.sendMessage(component, p.getUUID());
 	}
 	
 	// support for any color, optionally bold text.
@@ -157,11 +160,11 @@ public class MyConfig
 		StringTextComponent component = new StringTextComponent (chatMessage);
 		// set to Dark Green Bold
 		if (boldText) {
-			component.getStyle().setBold(true);
+			component.getStyle().withBold(true);
 		}
-		component.getStyle().setColor(Color.fromTextFormatting(textColor));
+		component.getStyle().withColor(Color.fromLegacyFormat(textColor));
 
-		p.sendMessage(component, p.getUniqueID());
+		p.sendMessage(component, p.getUUID());
 	}
 	
 	public static void bakeConfig()
