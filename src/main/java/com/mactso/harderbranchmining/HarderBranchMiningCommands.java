@@ -5,20 +5,19 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 
 public class HarderBranchMiningCommands {
 	String subcommand = "";
 	String value = "";
 	
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
-		dispatcher.register(Commands.literal("hbm").requires((source) -> 
+		dispatcher.register(Commands.literal("harderbranchmining").requires((source) -> 
 			{
 				return source.hasPermission(2);
 			}
@@ -56,11 +55,11 @@ public class HarderBranchMiningCommands {
 			)
 			)
 		.then(Commands.literal("info").executes(ctx -> {
-					ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) ctx.getSource().getEntity();
-					World worldName = serverPlayerEntity.level;
+					ServerPlayer serverPlayerEntity = (ServerPlayer) ctx.getSource().getEntity();
+					Level worldName = serverPlayerEntity.level;
 					String chatMessage = worldName.dimensionType().toString() 
 										+ "\n Current Values";
-					MyConfig.sendChat(serverPlayerEntity, chatMessage, TextFormatting.DARK_GREEN, MyConfig.BOLD);
+					MyConfig.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN, MyConfig.BOLD);
 		            chatMessage = 
 		              		  "\n  Exhaustion Type.: " + MyConfig.aExhaustionType
 		            		+ "\n  Debug Level...........: " + MyConfig.aDebugLevel

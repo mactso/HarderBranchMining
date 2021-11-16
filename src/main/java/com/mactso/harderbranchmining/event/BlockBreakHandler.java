@@ -7,16 +7,16 @@ import com.mactso.harderbranchmining.config.ManagerBlocksWhiteList;
 import com.mactso.harderbranchmining.config.MyConfig;
 import com.mactso.harderbranchmining.config.ToolManager;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.OreBlock;
-import net.minecraft.block.RedstoneOreBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.OreBlock;
+import net.minecraft.world.level.block.RedStoneOreBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -48,7 +48,7 @@ public class BlockBreakHandler {
     	double depthBasedExhaustionFactor = 0.0;
     	double tempExhaustionAmount = 0;
        
-        PlayerEntity p = event.getPlayer();
+        Player p = event.getPlayer();
         //Item item = p.getHeldItemMainhand().getItem();
 
         // no exhaustion for soft items.
@@ -72,7 +72,7 @@ public class BlockBreakHandler {
        	}
        	
         // normal exhaustion for ore blocks
-       	if ((block instanceof RedstoneOreBlock) || (block instanceof OreBlock)) {
+       	if ((block instanceof RedStoneOreBlock) || (block instanceof OreBlock)) {
        		if (MyConfig.aNormalOreHandling) {
             	if (MyConfig.aDebugLevel > 1) {
             		MyConfig.sendChat(p, "Normal Ore Block broken normally.");
@@ -88,7 +88,7 @@ public class BlockBreakHandler {
         
         // domain:tool:dimension
         DimensionType dimensionType = p.level.dimensionType();
-        RegistryKey<World> dimensionKey = p.level.dimension();
+        ResourceKey<Level> dimensionKey = p.level.dimension();
         String dimensionId = dimensionKey.location().toString();
         ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName().toString(),dimensionId);
          
@@ -135,7 +135,7 @@ public class BlockBreakHandler {
 			return;
 		} 
 
-   		PlayerEntity p = event.getPlayer();
+   		Player p = event.getPlayer();
    		if (p.level.isClientSide()) {
    			debugWorldName = "client-remote ";
    		}
@@ -168,7 +168,7 @@ public class BlockBreakHandler {
         	}          		
        	}
         // no exhaustion for ore block items.  
-       	if ((block instanceof RedstoneOreBlock) || (block instanceof OreBlock)) {
+       	if ((block instanceof RedStoneOreBlock) || (block instanceof OreBlock)) {
        		if (MyConfig.aNormalOreHandling) {
             	if ((MyConfig.aDebugLevel > 1)&&(debugLimiter++ > 39)) {
             		MyConfig.sendChat(p,"Breaking Ore Block full speed with no speed adjust true.");
@@ -193,7 +193,7 @@ public class BlockBreakHandler {
        
         // key = moddomain:tool,dimension
         DimensionType dimensionType = p.level.dimensionType();
-        RegistryKey<World> dimensionKey = p.level.dimension();
+        ResourceKey<Level> dimensionKey = p.level.dimension();
         String dimensionId = dimensionKey.location().toString();
         
 //        DimensionType dimensionType = p.world.getDimensionType();
@@ -252,7 +252,7 @@ public class BlockBreakHandler {
 					MyConfig.sendChat (p, msg);
 					if (altitude < p.getY ()) {
 						msg = " Extra Downward Speed Modifier  .: " + MyConfig.aDownSpeedModifier;
-			            MyConfig.sendChat (p, msg, TextFormatting.YELLOW);
+			            MyConfig.sendChat (p, msg, ChatFormatting.YELLOW);
 					}
 				}
 				debugLimiter = 0;

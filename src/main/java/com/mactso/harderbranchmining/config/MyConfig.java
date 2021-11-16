@@ -1,15 +1,13 @@
 //1.15.2
 package com.mactso.harderbranchmining.config;
 
-import net.minecraft.util.text.Color;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mactso.harderbranchmining.Main;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -17,7 +15,7 @@ import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class MyConfig
@@ -56,7 +54,8 @@ public class MyConfig
 		+ "minecraft:netherite_axe,minecraft:overworld,48,1.1;"			
 		+ "minecraft:iron_pickaxe,minecraft:the_nether,124,2.2;"
 		+ "minecraft:netherite_pickaxe,minecraft:the_nether,124,1.0;"
-		;		
+		;	
+		
 		public final String defaultBlocksWhiteList6464 = 
 				    "ore_stone_variants:coal_ore;"+
 					"ore_stone_variants:iron_ore;"+
@@ -141,28 +140,28 @@ public class MyConfig
 
     // for this mod- default color is green.
 	// support for any color chattext
-	public static void sendChat(PlayerEntity p, String chatMessage) {
-		StringTextComponent component = new StringTextComponent (chatMessage);
-		component.getStyle().withColor(Color.fromLegacyFormat(TextFormatting.GRAY));
+	public static void sendChat(Player p, String chatMessage) {
+		TextComponent component = new TextComponent (chatMessage);
+		component.getStyle().withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY));
 		p.sendMessage(component, p.getUUID());
 	}
 
 
 	// support for any color chattext
-	public static void sendChat(PlayerEntity p, String chatMessage, TextFormatting textColor) {
-		StringTextComponent component = new StringTextComponent (chatMessage);
-		component.getStyle().withColor(Color.fromLegacyFormat(textColor));
+	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
+		TextComponent component = new TextComponent (chatMessage);
+		component.getStyle().withColor(TextColor.fromLegacyFormat(textColor));
 		p.sendMessage(component, p.getUUID());
 	}
 	
 	// support for any color, optionally bold text.
-	public static void sendChat(PlayerEntity p, String chatMessage, TextFormatting textColor, boolean boldText) {
-		StringTextComponent component = new StringTextComponent (chatMessage);
+	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor, boolean boldText) {
+		TextComponent component = new TextComponent (chatMessage);
 		// set to Dark Green Bold
 		if (boldText) {
 			component.getStyle().withBold(true);
 		}
-		component.getStyle().withColor(Color.fromLegacyFormat(textColor));
+		component.getStyle().withColor(TextColor.fromLegacyFormat(textColor));
 
 		p.sendMessage(component, p.getUUID());
 	}
@@ -181,7 +180,7 @@ public class MyConfig
 	}
 	
 	@SubscribeEvent
-	public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent)
+	public static void onModConfigEvent(final ModConfigEvent configEvent)
 	{
 		if (configEvent.getConfig().getSpec() == MyConfig.COMMON_SPEC)
 		{
