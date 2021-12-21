@@ -2,6 +2,8 @@
 package com.mactso.harderbranchmining;
 
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+
 import com.mactso.harderbranchmining.config.MyConfig;
 import com.mactso.harderbranchmining.config.ToolManager;
 import com.mactso.harderbranchmining.event.BlockBreakHandler;
@@ -12,7 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("harderbranchmining")
@@ -46,7 +47,7 @@ public class Main
 		}
 
 		@SubscribeEvent 
-		public static void onServerStarting (FMLServerStartingEvent event) {
+		public static void onServerStarting (ServerStartingEvent event) {
 			System.out.println("HarderBranchMining: Initializing Toolmanager");
 			ToolManager.toolInit();
 		}
