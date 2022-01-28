@@ -16,8 +16,8 @@ apply plugin: 'maven-publish'
 
 
 version = "${mc_version}-${mod_version}"
-group = 'com.mactso.villagersrespawn' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'VillagersRespawn'
+group = 'com.mactso.harderbranchmining' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'HarderBranchMining'
 
 // Mojang ships Java 17 to end users in 1.18+ instead of Java 8 in 1.16 or lower, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)

@@ -165,7 +165,8 @@ public class BlockBreakHandler {
         	if ((MyConfig.aDebugLevel > 1)&&(debugLimiter++ > 39)) {
         		MyConfig.sendChat(p,block.getDescriptionId().toString() + " is in the Ore block tags.");
 				debugLimiter = 0;
-        	}          		
+        	}  
+   			return;
        	}
         // no exhaustion for ore block items.  
        	if ((block instanceof RedStoneOreBlock) || (block instanceof OreBlock)) {
