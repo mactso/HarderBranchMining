@@ -182,7 +182,7 @@ public class BlockBreakHandler {
         // Item debugItem = p.getHeldItemMainhand().getItem();
 
         // no slowdown for soft items.
-        if (p.getMainHandItem().isEmpty()) {
+        if (p.getMainHandItem().isEmpty()) { // TODO this looks wrong.  (Bare Hands)
         	BlockState s = event.getState();
         	double hardness = s.getDestroySpeed(p.level, event.getPos());
         	// Block debugBlock = event.getState().getBlock();
@@ -205,9 +205,7 @@ public class BlockBreakHandler {
         								dimensionId);
 
 		int altitude = event.getPos().getY();
-		if (altitude < 5) {
-			altitude = 5;  // cubic chunks compatibility
-		}
+
         // altitude above where tool exhaustion starts.
         if (altitude > toolInfo.getExhaustionY()) {
         	return;
@@ -220,39 +218,41 @@ public class BlockBreakHandler {
     	// BlockState debugState = event.getState();
     	
 		// float baseDestroySpeed = playerItem.getDestroySpeed(p.getHeldItemMainhand(), s);
-		float baseDestroySpeed = event.getOriginalSpeed();
-		float newDestroySpeed = baseDestroySpeed;
-		
-		if (MyConfig.aDigSpeedModifier>1.0) {
-			newDestroySpeed = baseDestroySpeed - baseDestroySpeed * (float) depthBasedSpeedFactor;
-			newDestroySpeed = newDestroySpeed / (float) MyConfig.aDigSpeedModifier;
+		double newDestroySpeed = event.getOriginalSpeed();
+		double aDigSpeedModifier = MyConfig.aDigModifier;
+
+		if (MyConfig.aDigModifier>1.0) {
+			double modifierOnly = (aDigSpeedModifier - 1.0d);
+			double depthAdjustedDigSpeedModifier =  1.0d + ( modifierOnly * depthBasedSpeedFactor);
+			newDestroySpeed = (event.getOriginalSpeed() / depthAdjustedDigSpeedModifier);
 			// Optionally slower digging blocks lower than player feet.
 			if (altitude < p.getY()) {
-				newDestroySpeed = newDestroySpeed / (float) MyConfig.aDownSpeedModifier;
+				newDestroySpeed = newDestroySpeed / MyConfig.aDownModifier;
 			}
 		}
 		
 		
 		if (newDestroySpeed > 0) {
-			event.setNewSpeed(newDestroySpeed);
+			event.setNewSpeed((float) newDestroySpeed);
 		}
  
 		if (MyConfig.aDebugLevel > 0) {
 			if (debugLimiter++ > 5) {  // debugLimiter to avoid spamming chat window
 				System.out.println("dbgL:"+MyConfig.aDebugLevel
 						 +" exT:"+MyConfig.aExhaustionType
-						 +" DSM:" + MyConfig.aDigSpeedModifier);
-				System.out.println("Breaking Block Speed ! depthSpeedFactor:" + (depthBasedSpeedFactor * 100) + "%");
-				System.out.println("Breaking Block Speed ! Configured digSpeedModifer: " + (MyConfig.aDigSpeedModifier * 100) + "%");
-				System.out.println("Breaking Block Speed ! Original Speed: "+ baseDestroySpeed+ " newSpeedSet:" + (event.getNewSpeed())+ " DigSpeedMod:"+ MyConfig.aDigSpeedModifier + ".");
+						 +" DSM:" + MyConfig.aDigModifier);
+				System.out.println("Breaking Block Speed ! depthSpeedFactor:" + (float) (depthBasedSpeedFactor * 100) + "%");
+				System.out.println("Breaking Block Speed ! Configured digSpeedModifer: " + (float) (MyConfig.aDigModifier * 100) + "%");
+				System.out.println("Breaking Block Speed ! Original Speed: "+ event.getOriginalSpeed() + " newSpeedSet:" + (event.getNewSpeed())+ " DigSpeedMod:"+ MyConfig.aDigModifier + ".");
 				if (MyConfig.aDebugLevel > 1 && p.level.isClientSide())  {
-					String msg = "\n" + debugWorldName +" :  Breaking Block Speed ! \n Default Minecraft Digging Speed  : "+ baseDestroySpeed 
-							+ "\n Standard Digging Speed Modifier .:"+ MyConfig.aDigSpeedModifier 
-							+ "\n Modified Breaking Speed           .: " + (event.getNewSpeed()) 
+					String msg = "\nClientSide " + debugWorldName +" :  Breaking Block Speed ! \n Default Minecraft Digging Speed  : "+ event.getOriginalSpeed() 
+							+ "\n Standard Digging Speed Modifier .:"+ MyConfig.aDigModifier 
+							+ "\n Modified Breaking Speed           .: " + (event.getNewSpeed())
+							+ "\n Player Y = " + p.getY() + " Block Y = " + altitude
 							+ "";
 					MyConfig.sendChat (p, msg);
 					if (altitude < p.getY ()) {
-						msg = " Extra Downward Speed Modifier  .: " + MyConfig.aDownSpeedModifier;
+						msg = " Extra Downward Speed Modifier  .: " + MyConfig.aDownModifier;
 			            MyConfig.sendChat (p, msg, ChatFormatting.YELLOW);
 					}
 				}

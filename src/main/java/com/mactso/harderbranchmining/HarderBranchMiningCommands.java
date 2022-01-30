@@ -63,8 +63,8 @@ public class HarderBranchMiningCommands {
 		            chatMessage = 
 		              		  "\n  Exhaustion Type.: " + MyConfig.aExhaustionType
 		            		+ "\n  Debug Level...........: " + MyConfig.aDebugLevel
-		            		+ "\n  Dig Modifier.............: " + MyConfig.aDigSpeedModifier
-		            		+ "\n  Down Modifier........: " + MyConfig.aDownSpeedModifier
+		            		+ "\n  Dig Modifier.............: " + MyConfig.aDigModifier
+		            		+ "\n  Down Modifier........: " + MyConfig.aDownModifier
 		            		;
 					MyConfig.sendChat(serverPlayerEntity, chatMessage);
 		            return 1;
@@ -76,13 +76,13 @@ public class HarderBranchMiningCommands {
 	}
 	
 	public static int setDigSpeed (double newDigSpeed) {
-			MyConfig.aDigSpeedModifier = newDigSpeed;
+			MyConfig.aDigModifier = newDigSpeed;
 			MyConfig.pushValues();
 		return 1;
 	}
 
 	public static int setDownSpeed (double newDownSpeed) {
-		MyConfig.aDownSpeedModifier = newDownSpeed;
+		MyConfig.aDownModifier = newDownSpeed;
 		MyConfig.pushValues();
 	return 1;
 }	

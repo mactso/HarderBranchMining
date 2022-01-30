@@ -26,8 +26,8 @@ public class MyConfig
 		public final ConfigValue<String> blocksWhiteListActual;
 		public final IntValue	 exhaustionType;
 		public final IntValue	 debugLevel;	
-		public final DoubleValue digSpeedModifier;	
-		public final DoubleValue downExhaustion;		
+		public final DoubleValue digModifier;	
+		public final DoubleValue downModifier;		
 		public final BooleanValue normalOre;
 
 
@@ -81,15 +81,15 @@ public class MyConfig
 					.translation(Main.MODID + ".config." + "debugLevel")
 					.defineInRange("debugLevel", () -> 0, 0, 2);
 			
-			digSpeedModifier = builder
-					.comment("Digging Speed Modifer: (none) 1.0 to (max) 32.0")
-					.translation(Main.MODID + ".config." + "aDigSpeedModifier")
-					.defineInRange("aDigSpeedModifier", () -> 1.09, 1.0, 32.0);
+			digModifier = builder
+					.comment("Sideways and Upwards Digging Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
+					.translation(Main.MODID + ".config." + "digModifier")
+					.defineInRange("digModifier", () -> 1.09, 1.0, 32.0);
 			
-			downExhaustion = builder
-					.comment("Down Speed Modifer: (none) 1.0 to (max) 32.0")
-					.translation(Main.MODID + ".config." + "aDownExhaustion")
-					.defineInRange("aDownExhaustion", () -> 1.03, 1.0, 32.0);
+			downModifier = builder
+					.comment("Downwards Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
+					.translation(Main.MODID + ".config." + "downModifier")
+					.defineInRange("downModifier", () -> 1.03, 1.0, 32.0);
 
 			normalOre = builder
 					.comment("Normal Ore Behavior: true")
@@ -126,8 +126,8 @@ public class MyConfig
 	}
 	public static int       aExhaustionType;
 	public static int       aDebugLevel;
-	public static double    aDownSpeedModifier;
-	public static double    aDigSpeedModifier;
+	public static double    aDownModifier;
+	public static double    aDigModifier;
 	public static boolean   aNormalOreHandling;
 	public static String[]  aDefaultTools;
 	public static String    aDefaultTools6464;
@@ -170,8 +170,8 @@ public class MyConfig
 	{
 		aExhaustionType = COMMON.exhaustionType.get();
 		aDebugLevel = COMMON.debugLevel.get();
-		aDigSpeedModifier = COMMON.digSpeedModifier.get();
-		aDownSpeedModifier = COMMON.downExhaustion.get();
+		aDigModifier = COMMON.digModifier.get();
+		aDownModifier = COMMON.downModifier.get();
 		aNormalOreHandling = COMMON.normalOre.get();		
 		aDefaultTools6464 = COMMON.toolsActual.get() ;
 		aDefaultBlocksWhitelist6464 = COMMON.blocksWhiteListActual.get() ;
@@ -193,13 +193,13 @@ public class MyConfig
 	public static void pushValues() {
 		System.out.println("dbgL:"+MyConfig.aDebugLevel
 						 +" exhT:"+MyConfig.aExhaustionType
-						 +" DigSM:" + MyConfig.aDigSpeedModifier
-						 +" DwnSM:" + MyConfig.aDownSpeedModifier
+						 +" DigSM:" + MyConfig.aDigModifier
+						 +" DwnSM:" + MyConfig.aDownModifier
 						 +" NmOre:" + MyConfig.aNormalOreHandling );
 		COMMON.debugLevel.set( MyConfig.aDebugLevel);
 		COMMON.exhaustionType.set( MyConfig.aExhaustionType);
-		COMMON.digSpeedModifier.set( MyConfig.aDigSpeedModifier);
-		COMMON.downExhaustion.set( MyConfig.aDownSpeedModifier);
+		COMMON.digModifier.set( MyConfig.aDigModifier);
+		COMMON.downModifier.set( MyConfig.aDownModifier);
 		COMMON.normalOre.set( MyConfig.aNormalOreHandling);
 	}
 
