@@ -28,31 +28,33 @@ public class MyConfig
 		public final IntValue	 debugLevel;	
 		public final DoubleValue digModifier;	
 		public final DoubleValue downModifier;		
+		public final IntValue	 minDepthLimit;	
 		public final BooleanValue normalOre;
 
 
 		public final String defaultTools6464 = 
-		  "hbm:default,hbm:default_dimension,48,10.0;"
-		+ "minecraft:torch,minecraft:overworld,48,0.2;"		  
-	  	+ "minecraft:wooden_pickaxe,minecraft:overworld,48,8.0;"
-		+ "minecraft:stone_pickaxe,minecraft:overworld,48,4.0;"
-		+ "minecraft:iron_pickaxe,minecraft:overworld,48,2.0;"
-		+ "minecraft:golden_pickaxe,minecraft:overworld,48,1.0;"
-		+ "minecraft:diamond_pickaxe,minecraft:overworld,48,1.2;"
-		+ "minecraft:netherite_pickaxe,minecraft:overworld,48,1.1;"
-		+ "minecraft:wooden_shovel,minecraft:overworld,48,8.0;"
-		+ "minecraft:stone_shovel,minecraft:overworld,48,4.0;"
-		+ "minecraft:iron_shovel,minecraft:overworld,48,2.0;"
+		  "hbm:default,hbm:default_dimension,48,2.0;"
+		+ "minecraft:torch,minecraft:overworld,48,1.0;"		  
+	  	+ "minecraft:wooden_pickaxe,minecraft:overworld,48,4.0;"
+		+ "minecraft:stone_pickaxe,minecraft:overworld,48,2.0;"
+		+ "minecraft:iron_pickaxe,minecraft:overworld,48,1.5;"
+		+ "minecraft:golden_pickaxe,minecraft:overworld,32,1.0;"
+		+ "minecraft:diamond_pickaxe,minecraft:overworld,32,1.2;"
+		+ "minecraft:netherite_pickaxe,minecraft:overworld,16,1.1;"
+		+ "minecraft:wooden_shovel,minecraft:overworld,48,4.0;"
+		+ "minecraft:stone_shovel,minecraft:overworld,48,2.0;"
+		+ "minecraft:iron_shovel,minecraft:overworld,48,1.5;"
 		+ "minecraft:golden_shovel,minecraft:overworld,48,1.0;"
 		+ "minecraft:diamond_shovel,minecraft:overworld,48,1.2;"
 		+ "minecraft:netherite_shovel,minecraft:overworld,48,1.1;"
-		+ "minecraft:wooden_axe,minecraft:overworld,48,2.0;"
-		+ "minecraft:stone_axe,minecraft:overworld,48,1.0;"
-		+ "minecraft:iron_axe,minecraft:overworld,48,2.0;"
+		+ "minecraft:wooden_axe,minecraft:overworld,48,4.0;"
+		+ "minecraft:stone_axe,minecraft:overworld,48,2.0;"
+		+ "minecraft:iron_axe,minecraft:overworld,48,1.5;"
 		+ "minecraft:golden_axe,minecraft:overworld,48,1.0;"
 		+ "minecraft:diamond_axe,minecraft:overworld,48,1.2;"			
 		+ "minecraft:netherite_axe,minecraft:overworld,48,1.1;"			
 		+ "minecraft:iron_pickaxe,minecraft:the_nether,124,2.2;"
+		+ "minecraft:diamond_pickaxe,minecraft:the_nether,124,1.2;"
 		+ "minecraft:netherite_pickaxe,minecraft:the_nether,124,1.0;"
 		;	
 		
@@ -84,17 +86,22 @@ public class MyConfig
 			digModifier = builder
 					.comment("Sideways and Upwards Digging Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
 					.translation(Main.MODID + ".config." + "digModifier")
-					.defineInRange("digModifier", () -> 1.09, 1.0, 32.0);
+					.defineInRange("digModifier", () -> 2.0, 1.0, 32.0);
 			
 			downModifier = builder
 					.comment("Downwards Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
 					.translation(Main.MODID + ".config." + "downModifier")
-					.defineInRange("downModifier", () -> 1.03, 1.0, 32.0);
+					.defineInRange("downModifier", () -> 2.0, 1.0, 32.0);
 
+			minDepthLimit = builder
+					.comment("Lowest Depth Y where modifiers stop getting harder")
+					.translation(Main.MODID + ".config." + "minDepthLimit")
+					.defineInRange("minDepthLimit", () -> -32, -2032, 32);
+			
 			normalOre = builder
 					.comment("Normal Ore Behavior: true")
-					.translation(Main.MODID + ".config." + "aNormalOre")
-					.define ("aNormalOre", () -> true);
+					.translation(Main.MODID + ".config." + "normalOre")
+					.define ("normalOre", () -> true);
 			builder.pop();
 			
 			builder.push ("Tool Values 6464");
@@ -124,11 +131,12 @@ public class MyConfig
 		COMMON_SPEC = specPair.getRight();
 		COMMON = specPair.getLeft();
 	}
-	public static int       aExhaustionType;
-	public static int       aDebugLevel;
-	public static double    aDownModifier;
-	public static double    aDigModifier;
-	public static boolean   aNormalOreHandling;
+	public static int       exhaustionType;
+	public static int       debugLevel;
+	public static double    downModifier;
+	public static double    digModifier;
+	public static int       minDepthLimit;
+	public static boolean   normalOreHandling;
 	public static String[]  aDefaultTools;
 	public static String    aDefaultTools6464;
 	public static String[]  aDefaultBlocksWhitelist;
@@ -168,14 +176,15 @@ public class MyConfig
 	
 	public static void bakeConfig()
 	{
-		aExhaustionType = COMMON.exhaustionType.get();
-		aDebugLevel = COMMON.debugLevel.get();
-		aDigModifier = COMMON.digModifier.get();
-		aDownModifier = COMMON.downModifier.get();
-		aNormalOreHandling = COMMON.normalOre.get();		
+		exhaustionType = COMMON.exhaustionType.get();
+		debugLevel = COMMON.debugLevel.get();
+		digModifier = COMMON.digModifier.get();
+		downModifier = COMMON.downModifier.get();
+		minDepthLimit = COMMON.minDepthLimit.get();
+		normalOreHandling = COMMON.normalOre.get();		
 		aDefaultTools6464 = COMMON.toolsActual.get() ;
 		aDefaultBlocksWhitelist6464 = COMMON.blocksWhiteListActual.get() ;
-		System.out.println("HarderBranchMiningConfig Type:" + aExhaustionType + ", Debug Level:" + aDebugLevel);
+		System.out.println("HarderBranchMiningConfig Type:" + exhaustionType + ", Debug Level:" + debugLevel);
 
 	}
 	
@@ -191,16 +200,26 @@ public class MyConfig
 	}
 
 	public static void pushValues() {
-		System.out.println("dbgL:"+MyConfig.aDebugLevel
-						 +" exhT:"+MyConfig.aExhaustionType
-						 +" DigSM:" + MyConfig.aDigModifier
-						 +" DwnSM:" + MyConfig.aDownModifier
-						 +" NmOre:" + MyConfig.aNormalOreHandling );
-		COMMON.debugLevel.set( MyConfig.aDebugLevel);
-		COMMON.exhaustionType.set( MyConfig.aExhaustionType);
-		COMMON.digModifier.set( MyConfig.aDigModifier);
-		COMMON.downModifier.set( MyConfig.aDownModifier);
-		COMMON.normalOre.set( MyConfig.aNormalOreHandling);
+		System.out.println("dbgL:"+MyConfig.debugLevel
+						 +" exhT:"+MyConfig.exhaustionType
+						 +" DigSM:" + MyConfig.digModifier
+						 +" DwnSM:" + MyConfig.downModifier
+						 +" MinDL:" + MyConfig.minDepthLimit
+						 +" NmOre:" + MyConfig.normalOreHandling );
+		int tdl = MyConfig.debugLevel;
+		int ext = MyConfig.exhaustionType;
+		double dgm = MyConfig.digModifier;
+		double dwm = MyConfig.downModifier;
+		int mdl = MyConfig.minDepthLimit;
+		boolean noh = MyConfig.normalOreHandling;
+
+		COMMON.debugLevel.set( tdl );
+		COMMON.exhaustionType.set( ext );
+		COMMON.digModifier.set( dgm );
+		COMMON.downModifier.set( dwm );
+		COMMON.minDepthLimit.set( mdl );
+		COMMON.normalOre.set( noh );
+
 	}
 
 }

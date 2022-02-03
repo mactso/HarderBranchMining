@@ -11,20 +11,24 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ToolManager {
 	public static class toolItem {
-		double toolExhaustionY;
-		double toolExhaustionAmount;
+		int toolYModifierStart;
+		double toolModifierAmount;
 
-		public toolItem(double toolExhaustionY, double toolExhaustionAmount) {
-			this.toolExhaustionY = toolExhaustionY;
-			this.toolExhaustionAmount = toolExhaustionAmount;
+		public toolItem(int toolYModifierStart, double toolModifierAmount) {
+			this.toolYModifierStart = toolYModifierStart;
+			this.toolModifierAmount = toolModifierAmount;
 		}
 
+		public double getDigModifier() {
+			return toolModifierAmount;
+		}
+		
 		public double getExhaustionAmt() {
-			return toolExhaustionAmount;
+			return (toolModifierAmount/3.65);
 		}
 
-		public double getExhaustionY() {
-			return toolExhaustionY;
+		public int getYModifierStart() {
+			return toolYModifierStart;
 		}
 
 	}
@@ -79,16 +83,16 @@ public class ToolManager {
 				String modAndTool = st.nextToken();
 				String key = modAndTool + ":" + st.nextToken(); // append dimension id.
 				
-				double tExhaustionY = Double.parseDouble(st.nextToken());
-				if ((tExhaustionY < 5.0) || (tExhaustionY > 255.0)) {
-					tExhaustionY = 48.0;
+				int toolYModifierStart = Integer.parseInt(st.nextToken());
+				if ((toolYModifierStart < 5) || (toolYModifierStart > 255)) {
+					toolYModifierStart = 48;
 				}
 				double tExhaustionAmt = Double.parseDouble(st.nextToken());
 				if ((tExhaustionAmt < 0.0) || (tExhaustionAmt > 40.0)) {
 					tExhaustionAmt = .0;
 				}
 
-				toolHashtable.put(key, new toolItem(tExhaustionY, tExhaustionAmt));
+				toolHashtable.put(key, new toolItem(toolYModifierStart, tExhaustionAmt));
 				if (!modAndTool.contentEquals("hbm:default") &&
 				    !ForgeRegistries.ITEMS.containsKey(new ResourceLocation(modAndTool))
 				   )  {
@@ -101,9 +105,9 @@ public class ToolManager {
 		}
 
 		if (getToolInfo(defaultToolString, defaultToolDimensionID) == null) {
-			double tExhaustionY = 48.0;
+			int toolYModifierStart = 48;
 			double tExhaustionAmt = 10.0;
-			toolHashtable.put(defaultToolKey, new toolItem(tExhaustionY, tExhaustionAmt));
+			toolHashtable.put(defaultToolKey, new toolItem(toolYModifierStart, tExhaustionAmt));
 		}
 
 	}

@@ -1,4 +1,4 @@
-//1.15.2
+
 package com.mactso.harderbranchmining;
 
 import net.minecraftforge.event.RegisterCommandsEvent;

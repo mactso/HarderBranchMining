@@ -38,6 +38,14 @@ public class HarderBranchMiningCommands {
 			)
 			)
 			)
+		.then(Commands.literal("minDepthLevel").then(
+				Commands.argument("minDepthLevel", IntegerArgumentType.integer(-2032,32)).executes(ctx -> {
+					return setMinDepthLimit(IntegerArgumentType.getInteger(ctx, "minDepthLevel"));
+					// return 1;
+			}
+			)
+			)
+			)
 		.then(Commands.literal("debugLevel").then(
 				Commands.argument("debugLevel", IntegerArgumentType.integer(0,2)).executes(ctx -> {
 					return setDebugLevel(IntegerArgumentType.getInteger(ctx, "debugLevel"));
@@ -61,10 +69,11 @@ public class HarderBranchMiningCommands {
 										+ "\n Current Values";
 					MyConfig.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN, MyConfig.BOLD);
 		            chatMessage = 
-		              		  "\n  Exhaustion Type.: " + MyConfig.aExhaustionType
-		            		+ "\n  Debug Level...........: " + MyConfig.aDebugLevel
-		            		+ "\n  Dig Modifier.............: " + MyConfig.aDigModifier
-		            		+ "\n  Down Modifier........: " + MyConfig.aDownModifier
+		              		  "\n  Exhaustion Type.: " + MyConfig.exhaustionType
+		            		+ "\n  Debug Level...........: " + MyConfig.debugLevel
+		            		+ "\n  Dig Modifier.............: " + MyConfig.digModifier
+		            		+ "\n  Down Modifier........: " + MyConfig.downModifier
+		            		+ "\n  Min Depth Limit....: " + MyConfig.minDepthLimit;
 		            		;
 					MyConfig.sendChat(serverPlayerEntity, chatMessage);
 		            return 1;
@@ -76,25 +85,31 @@ public class HarderBranchMiningCommands {
 	}
 	
 	public static int setDigSpeed (double newDigSpeed) {
-			MyConfig.aDigModifier = newDigSpeed;
+			MyConfig.digModifier = newDigSpeed;
 			MyConfig.pushValues();
 		return 1;
 	}
 
 	public static int setDownSpeed (double newDownSpeed) {
-		MyConfig.aDownModifier = newDownSpeed;
+		MyConfig.downModifier = newDownSpeed;
 		MyConfig.pushValues();
 	return 1;
-}	
+	}	
+
+	public static int setMinDepthLimit (int minDepthLimit) {
+		MyConfig.minDepthLimit = minDepthLimit;
+		MyConfig.pushValues();
+	return 1;
+}
 	
 	public static int setDebugLevel (int newDebugLevel) {
-		MyConfig.aDebugLevel = newDebugLevel;
+		MyConfig.debugLevel = newDebugLevel;
 		MyConfig.pushValues();
 		return 1;
 	}
 	
 	public static int setExhaustionType (int newExhaustionType) {
-		MyConfig.aExhaustionType = newExhaustionType;
+		MyConfig.exhaustionType = newExhaustionType;
 		MyConfig.pushValues();
 		return 1;
 	}
