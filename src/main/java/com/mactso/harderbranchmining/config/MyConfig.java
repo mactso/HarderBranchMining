@@ -89,12 +89,12 @@ public class MyConfig
 			digModifier = builder
 					.comment("Sideways and Upwards Digging Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
 					.translation(Main.MODID + ".config." + "digModifier")
-					.defineInRange("digModifier", () -> 2.0, 1.0, 32.0);
+					.defineInRange("digModifier", () -> 0.90, 0.01, 0.99);
 			
 			downModifier = builder
 					.comment("Downwards Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
 					.translation(Main.MODID + ".config." + "downModifier")
-					.defineInRange("downModifier", () -> 1.5, 1.0, 32.0);
+					.defineInRange("downModifier", () -> .80, 0.01, 0.99);
 
 			minDepthLimit = builder
 					.comment("Lowest Depth Y where modifiers stop getting harder")

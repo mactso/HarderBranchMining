@@ -161,24 +161,24 @@ public class BlockBreakHandler {
 
 		depthFactor = getDepthFactor(event.getPos().getY(), dimensionId, toolInfo.getYModifierStart());
 //		depthFactor = toolInfo.getYModifierStart() - event.getPos().getY();
-		
+		int y = 4;
 		if (depthFactor == -1.0) {
 			return;
 		}
 
 		double newDestroySpeed = event.getOriginalSpeed();
 
-		double speedReductionAmount = (newDestroySpeed  / (toolInfo.getDigModifier()) * depthFactor);
+		double speedReductionAmount = (newDestroySpeed  * (1.0 - toolInfo.getDigModifier()) * depthFactor);
 		newDestroySpeed -= speedReductionAmount;
 
-		speedReductionAmount = (newDestroySpeed  / (MyConfig.digModifier) * depthFactor);
+		speedReductionAmount = (newDestroySpeed  * (1.0 - MyConfig.digModifier) * depthFactor);
 		newDestroySpeed -= speedReductionAmount;
 
 		if (event.getPos().getY() < p.getY()) {
-			speedReductionAmount = (newDestroySpeed / (MyConfig.downModifier) * depthFactor);
+			speedReductionAmount = (newDestroySpeed * (1.0 - MyConfig.downModifier) * depthFactor);
 			newDestroySpeed -= speedReductionAmount;
 		}
-
+		y = 3;
 		if (newDestroySpeed > 0) {
 			event.setNewSpeed((float) newDestroySpeed);
 		}
@@ -189,15 +189,23 @@ public class BlockBreakHandler {
 						+ MyConfig.digModifier);
 				System.out.println(
 						"Breaking Block Speed ! depthSpeedFactor:" + (float) (depthFactor * 100) + "%");
+				System.out.println(
+						"Tool Dig Speed Modifier:" + (float) (toolInfo.getDigModifier() * 100) + "%");
 				System.out.println("Breaking Block Speed ! Configured digSpeedModifer: "
 						+ (float) (MyConfig.digModifier * 100) + "%");
 				System.out.println("Breaking Block Speed ! Original Speed: " + event.getOriginalSpeed()
 						+ " newSpeedSet:" + (event.getNewSpeed()) + " DigSpeedMod:" + MyConfig.digModifier + ".");
 				if (MyConfig.debugLevel > 1 && p.level.isClientSide()) {
+					String msg2 = "";
+					if (event.getPos().getY() < p.getY()) {
+						msg2 = "\nExtra Downward Speed Modifier  .: " + MyConfig.downModifier;
+					}
 					String msg = "\nClientSide " + debugWorldName
-							+ " :  Breaking Block Speed ! \n Default Minecraft Digging Speed  : "
-							+ event.getOriginalSpeed() + "\n Standard Digging Speed Modifier .:" + MyConfig.digModifier
-							+ "\n Modified Breaking Speed           .: " + (event.getNewSpeed()) + "\n Player Y = "
+							+ " :  Breaking Block Speed ! \n Default Minecraft Digging Speed  : " + event.getOriginalSpeed()  
+							+ "\n Standard Digging Speed Modifier .:" + MyConfig.digModifier *100 + "%"
+							+ "\nTool Dig Speed Modifier: " + (float) (toolInfo.getDigModifier() * 100) + "%"
+							+ msg2 
+							+ "\n Final Modified Breaking Speed           .: " + (event.getNewSpeed()) + "\n Player Y = "
 							+ p.getY() + " Block Y = " + event.getPos().getY() + "";
 					MyConfig.sendChat(p, msg);
 					if (event.getPos().getY() < p.getY()) {
