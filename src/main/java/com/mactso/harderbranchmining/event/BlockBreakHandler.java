@@ -10,7 +10,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.RedStoneOreBlock;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -83,12 +85,12 @@ public class BlockBreakHandler {
 		
 		depthBasedExhaustionFactor = toolInfo.getYModifierStart() - event.getPos().getY();
 		double depthFactor = getDepthFactor(event.getPos().getY(), "exhaustion", toolInfo.getYModifierStart());
-		
-		if (depthBasedExhaustionFactor < 0)
+		int debug5 = 5;
+		if (toolInfo.getYModifierStart() < event.getPos().getY()) {
 			return;
-		else {
+		} else {
 			if (MyConfig.exhaustionType == MyConfig.EXHAUSTION_DEPTH) {
-				depthBasedExhaustionFactor = depthBasedExhaustionFactor / toolInfo.getYModifierStart();
+				depthBasedExhaustionFactor = depthFactor;
 			} else { // EXHAUSTION_FIXED
 				depthBasedExhaustionFactor = 1.0;
 			}
@@ -116,7 +118,6 @@ public class BlockBreakHandler {
 	@SubscribeEvent
 	public void blockBreakSpeed(PlayerEvent.BreakSpeed event) {
 		double depthFactor = 0.0;
-
 		String debugWorldName = "server-local ";
 
 		if (event.getPlayer() == null) {
@@ -131,6 +132,7 @@ public class BlockBreakHandler {
 		}
 
 		Item playerItem = p.getMainHandItem().getItem();
+		
 //    	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
 //    		return;
 //    	}
@@ -158,20 +160,23 @@ public class BlockBreakHandler {
 		ToolManager.toolItem toolInfo = ToolManager.getToolInfo(playerItem.getRegistryName().toString(), dimensionId);
 
 		depthFactor = getDepthFactor(event.getPos().getY(), dimensionId, toolInfo.getYModifierStart());
+//		depthFactor = toolInfo.getYModifierStart() - event.getPos().getY();
 		
 		if (depthFactor == -1.0) {
 			return;
 		}
-		double newDestroySpeed = event.getOriginalSpeed() / toolInfo.getDigModifier();
 
-		if (MyConfig.digModifier > 1.0) {
-			double modifierOnly = (MyConfig.digModifier - 1.0d);
-			double depthAdjustedDigSpeedModifier = 1.0d + (modifierOnly * depthFactor);
-			newDestroySpeed = (event.getOriginalSpeed() / (toolInfo.getDigModifier() * depthAdjustedDigSpeedModifier)) ;
-			// Optionally slower digging blocks lower than player feet.
-			if (event.getPos().getY() < p.getY()) {
-				newDestroySpeed = newDestroySpeed / MyConfig.downModifier;
-			}
+		double newDestroySpeed = event.getOriginalSpeed();
+
+		double speedReductionAmount = (newDestroySpeed  / (toolInfo.getDigModifier()) * depthFactor);
+		newDestroySpeed -= speedReductionAmount;
+
+		speedReductionAmount = (newDestroySpeed  / (MyConfig.digModifier) * depthFactor);
+		newDestroySpeed -= speedReductionAmount;
+
+		if (event.getPos().getY() < p.getY()) {
+			speedReductionAmount = (newDestroySpeed / (MyConfig.downModifier) * depthFactor);
+			newDestroySpeed -= speedReductionAmount;
 		}
 
 		if (newDestroySpeed > 0) {
@@ -244,29 +249,24 @@ public class BlockBreakHandler {
 		return false;
 	}
 
-	private double getDepthFactor(int workAltitude, String dimensionId, int YModifierStart) {
+	private double getDepthFactor(int eventY, String dimensionId, int YModifierStart) {
 		double depthFactor;
-		
 
-		if (workAltitude > YModifierStart) {
-			return -1;
-		}
-
-		if (MyConfig.minDepthLimit >= YModifierStart) {
+		if (eventY > YModifierStart) {
 			return -1;
 		}
 		
-		if ((workAltitude < 1) && !dimensionId.equals("minecraft:overworld")&& !dimensionId.equals("exhaustion") ) {
-			workAltitude = 1;
-		}
-
-		if (workAltitude < MyConfig.minDepthLimit) {
-			workAltitude = MyConfig.minDepthLimit;
+		int yRange = (YModifierStart - MyConfig.minDepthLimit);		
+		if (yRange < 1) yRange = 1;
+		
+		if (eventY < MyConfig.minDepthLimit) {
+			eventY = MyConfig.minDepthLimit;
 		}
 		
-		int altitudeFactor = (YModifierStart - MyConfig.minDepthLimit);
+		int altitudeFactor = (YModifierStart - eventY);
 
-		depthFactor = 1.0 - ((double) ( workAltitude - MyConfig.minDepthLimit) / (double) altitudeFactor);
+		
+		depthFactor = (double) altitudeFactor / yRange ;
 		return depthFactor;
 	}
 

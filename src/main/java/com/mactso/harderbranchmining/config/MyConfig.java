@@ -33,28 +33,31 @@ public class MyConfig
 
 
 		public final String defaultTools6464 = 
-		  "hbm:default,hbm:default_dimension,48,2.0;"
+		  "hbm:default,hbm:default_dimension,48,0.5;"
 		+ "minecraft:torch,minecraft:overworld,48,1.0;"		  
-	  	+ "minecraft:wooden_pickaxe,minecraft:overworld,48,4.0;"
-		+ "minecraft:stone_pickaxe,minecraft:overworld,48,2.0;"
-		+ "minecraft:iron_pickaxe,minecraft:overworld,48,1.5;"
+	  	+ "minecraft:wooden_pickaxe,minecraft:overworld,48,0.5;"
+		+ "minecraft:stone_pickaxe,minecraft:overworld,48,0.65;"
+		+ "minecraft:iron_pickaxe,minecraft:overworld,48,0.75;"
 		+ "minecraft:golden_pickaxe,minecraft:overworld,32,1.0;"
-		+ "minecraft:diamond_pickaxe,minecraft:overworld,32,1.2;"
-		+ "minecraft:netherite_pickaxe,minecraft:overworld,16,1.1;"
-		+ "minecraft:wooden_shovel,minecraft:overworld,48,4.0;"
-		+ "minecraft:stone_shovel,minecraft:overworld,48,2.0;"
-		+ "minecraft:iron_shovel,minecraft:overworld,48,1.5;"
+		+ "minecraft:diamond_pickaxe,minecraft:overworld,32,0.85;"
+		+ "minecraft:netherite_pickaxe,minecraft:overworld,16,0.95;"
+		+ "minecraft:wooden_shovel,minecraft:overworld,48,0.5;"
+		+ "minecraft:stone_shovel,minecraft:overworld,48,0.65;"
+		+ "minecraft:iron_shovel,minecraft:overworld,48,0.75;"
 		+ "minecraft:golden_shovel,minecraft:overworld,48,1.0;"
-		+ "minecraft:diamond_shovel,minecraft:overworld,48,1.2;"
-		+ "minecraft:netherite_shovel,minecraft:overworld,48,1.1;"
-		+ "minecraft:wooden_axe,minecraft:overworld,48,4.0;"
-		+ "minecraft:stone_axe,minecraft:overworld,48,2.0;"
-		+ "minecraft:iron_axe,minecraft:overworld,48,1.5;"
+		+ "minecraft:diamond_shovel,minecraft:overworld,48,0.85;"
+		+ "minecraft:netherite_shovel,minecraft:overworld,48,.095;"
+		+ "minecraft:wooden_axe,minecraft:overworld,48,0.5;"
+		+ "minecraft:stone_axe,minecraft:overworld,48,0.65;"
+		+ "minecraft:iron_axe,minecraft:overworld,48,0.75;"
 		+ "minecraft:golden_axe,minecraft:overworld,48,1.0;"
-		+ "minecraft:diamond_axe,minecraft:overworld,48,1.2;"			
-		+ "minecraft:netherite_axe,minecraft:overworld,48,1.1;"			
-		+ "minecraft:iron_pickaxe,minecraft:the_nether,124,2.2;"
-		+ "minecraft:diamond_pickaxe,minecraft:the_nether,124,1.2;"
+		+ "minecraft:diamond_axe,minecraft:overworld,48,0.85;"			
+		+ "minecraft:netherite_axe,minecraft:overworld,48,0.95;"			
+	  	+ "minecraft:wooden_pickaxe,minecraft:the_nether,124,0.5;"
+		+ "minecraft:stone_pickaxe,minecraft:the_nether,124,0.65;"
+		+ "minecraft:iron_pickaxe,minecraft:the_nether,124,0.85;"
+		+ "minecraft:golden_pickaxe,minecraft:the_nether,124,1.0;"
+		+ "minecraft:diamond_pickaxe,minecraft:the_nether,124,0.95;"
 		+ "minecraft:netherite_pickaxe,minecraft:the_nether,124,1.0;"
 		;	
 		
@@ -91,7 +94,7 @@ public class MyConfig
 			downModifier = builder
 					.comment("Downwards Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
 					.translation(Main.MODID + ".config." + "downModifier")
-					.defineInRange("downModifier", () -> 2.0, 1.0, 32.0);
+					.defineInRange("downModifier", () -> 1.5, 1.0, 32.0);
 
 			minDepthLimit = builder
 					.comment("Lowest Depth Y where modifiers stop getting harder")
@@ -104,7 +107,7 @@ public class MyConfig
 					.define ("normalOre", () -> true);
 			builder.pop();
 			
-			builder.push ("Tool Values 6464");
+			builder.push ("Tool Values 6464 : tool,dimension,startY,Percent slower-exhaustion;");
 			toolsActual = builder
 					.comment("Tool String 6464")
 					.translation(Main.MODID + ".config" + "defaultToolsActual")

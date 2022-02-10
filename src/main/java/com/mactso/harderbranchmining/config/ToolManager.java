@@ -24,7 +24,7 @@ public class ToolManager {
 		}
 		
 		public double getExhaustionAmt() {
-			return (toolModifierAmount/3.65);
+			return (toolModifierAmount/1.5);
 		}
 
 		public int getYModifierStart() {
