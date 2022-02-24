@@ -1,6 +1,9 @@
 //1.15.2
 package com.mactso.harderbranchmining.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mactso.harderbranchmining.Main;
@@ -20,61 +23,61 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 @Mod.EventBusSubscriber(modid = Main.MODID, bus=Mod.EventBusSubscriber.Bus.MOD)
 public class MyConfig
 {
+
+	
 	public static class Common
 	{
-		public final ConfigValue<String> toolsActual;
-		public final ConfigValue<String> blocksWhiteListActual;
+		public final ConfigValue<List<? extends String>> toolsList;
+		public final ConfigValue<List<? extends String>> ignoreBlocksList;
+
 		public final IntValue	 exhaustionType;
 		public final IntValue	 debugLevel;	
-		public final DoubleValue digModifier;	
-		public final DoubleValue downModifier;		
-		public final IntValue	 minDepthLimit;	
+		public final IntValue    downModifier;		
 		public final BooleanValue normalOre;
-
-
-		public final String defaultTools6464 = 
-		  "hbm:default,hbm:default_dimension,48,0.5;"
-		+ "minecraft:torch,minecraft:overworld,48,1.0;"		  
-	  	+ "minecraft:wooden_pickaxe,minecraft:overworld,48,0.5;"
-		+ "minecraft:stone_pickaxe,minecraft:overworld,48,0.65;"
-		+ "minecraft:iron_pickaxe,minecraft:overworld,48,0.75;"
-		+ "minecraft:golden_pickaxe,minecraft:overworld,32,1.0;"
-		+ "minecraft:diamond_pickaxe,minecraft:overworld,32,0.85;"
-		+ "minecraft:netherite_pickaxe,minecraft:overworld,16,0.95;"
-		+ "minecraft:wooden_shovel,minecraft:overworld,48,0.5;"
-		+ "minecraft:stone_shovel,minecraft:overworld,48,0.65;"
-		+ "minecraft:iron_shovel,minecraft:overworld,48,0.75;"
-		+ "minecraft:golden_shovel,minecraft:overworld,48,1.0;"
-		+ "minecraft:diamond_shovel,minecraft:overworld,48,0.85;"
-		+ "minecraft:netherite_shovel,minecraft:overworld,48,.095;"
-		+ "minecraft:wooden_axe,minecraft:overworld,48,0.5;"
-		+ "minecraft:stone_axe,minecraft:overworld,48,0.65;"
-		+ "minecraft:iron_axe,minecraft:overworld,48,0.75;"
-		+ "minecraft:golden_axe,minecraft:overworld,48,1.0;"
-		+ "minecraft:diamond_axe,minecraft:overworld,48,0.85;"			
-		+ "minecraft:netherite_axe,minecraft:overworld,48,0.95;"			
-	  	+ "minecraft:wooden_pickaxe,minecraft:the_nether,124,0.5;"
-		+ "minecraft:stone_pickaxe,minecraft:the_nether,124,0.65;"
-		+ "minecraft:iron_pickaxe,minecraft:the_nether,124,0.85;"
-		+ "minecraft:golden_pickaxe,minecraft:the_nether,124,1.0;"
-		+ "minecraft:diamond_pickaxe,minecraft:the_nether,124,0.95;"
-		+ "minecraft:netherite_pickaxe,minecraft:the_nether,124,1.0;"
-		;	
-		
-		public final String defaultBlocksWhiteList6464 = 
-				    "ore_stone_variants:coal_ore;"+
-					"ore_stone_variants:iron_ore;"+
-					"ore_stone_variants:gold_ore;"+
-					"ore_stone_variants:diamond_ore;"+
-					"ore_stone_variants:lapis_ore;"+
-					"ore_stone_variants:redstone_ore;"+
-					"rockcandy:candy_ore;"+
-					"minecraft:oak_planks;"+
-					"minecraft:oak_fence;"
-			;	
 		
 		public Common(ForgeConfigSpec.Builder builder) {
-
+			List<String> defaultIgnoreBlocksList = Arrays.asList(
+				    "ore_stone_variants:coal_ore",
+					"ore_stone_variants:iron_ore",
+					"ore_stone_variants:gold_ore",
+					"ore_stone_variants:diamond_ore",
+					"ore_stone_variants:lapis_ore",
+					"ore_stone_variants:redstone_ore",
+					"rockcandy:candy_ore",
+					"minecraft:oak_planks",
+					"minecraft:oak_fence"
+			);	
+			List<String> defaultToolsList = Arrays.asList(
+					  "hbm:default1,hbm:default_dimension1,48,0,25,50"
+								, "minecraft:torch,minecraft:overworld,48,-32,0,100"
+							  	, "vanillaplustools:diamond_hammer,minecraft:overworld,48,-32,4,45"
+							  	, "vanillaplustools:*,minecraft:overworld,48,-32,50,40"
+							  	, "minecraft:wooden_pickaxe,minecraft:overworld,60,48,90,85"
+								, "minecraft:stone_pickaxe,minecraft:overworld,55,32,50,75"
+								, "minecraft:iron_pickaxe,minecraft:overworld,48,10,25,65"
+								, "minecraft:golden_pickaxe,minecraft:overworld,32,-32,10,55"
+								, "minecraft:diamond_pickaxe,minecraft:overworld,32,-32,4,45"
+								, "minecraft:netherite_pickaxe,minecraft:overworld,16,-60,2,35"
+								, "minecraft:wooden_shovel,minecraft:overworld,60,50,90,85"
+								, "minecraft:stone_shovel,minecraft:overworld,55,30,50,75"
+								, "minecraft:iron_shovel,minecraft:overworld,48,0,25,65"
+								, "minecraft:golden_shovel,minecraft:overworld,48,0,10,55"
+								, "minecraft:diamond_shovel,minecraft:overworld,48,-32,4,45"
+								, "minecraft:netherite_shovel,minecraft:overworld,48,-48,2,35"
+								, "minecraft:wooden_axe,minecraft:overworld,60,40,90,85"
+								, "minecraft:stone_axe,minecraft:overworld,60,32,50,75"
+								, "minecraft:iron_axe,minecraft:overworld,48,10,25,65"
+								, "minecraft:golden_axe,minecraft:overworld,32,-32,10,35"
+								, "minecraft:diamond_axe,minecraft:overworld,48,-32,4,35"			
+								, "minecraft:netherite_axe,minecraft:overworld,32,-32,2,35"			
+							  	, "minecraft:wooden_pickaxe,minecraft:the_nether,124,32,90,85"
+								, "minecraft:stone_pickaxe,minecraft:the_nether,124,24,50,75"
+								, "minecraft:iron_pickaxe,minecraft:the_nether,124,16,25,65"
+								, "minecraft:golden_pickaxe,minecraft:the_nether,124,8,10,5"
+								, "minecraft:diamond_pickaxe,minecraft:the_nether,124,4,4,25"
+								, "minecraft:netherite_pickaxe,minecraft:the_nether,124,4,2,5"
+					);
+			
 			builder.push("Exhaustion Control Values");
 			exhaustionType= builder
 					.comment("Exhaustion Type: 0 = None-Speedonly, 1=Proportional, 2=Fixed")
@@ -85,49 +88,49 @@ public class MyConfig
 					.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
 					.translation(Main.MODID + ".config." + "debugLevel")
 					.defineInRange("debugLevel", () -> 0, 0, 2);
-			
-			digModifier = builder
-					.comment("Sideways and Upwards Digging Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
-					.translation(Main.MODID + ".config." + "digModifier")
-					.defineInRange("digModifier", () -> 0.90, 0.01, 0.99);
-			
+	
 			downModifier = builder
-					.comment("Downwards Speed & Exhaustion Modifer: (none) 1.0 to (max) 32.0")
+					.comment("Downwards Speed & Exhaustion Modifer: Reduce downard digging to 80% of normal.")
 					.translation(Main.MODID + ".config." + "downModifier")
-					.defineInRange("downModifier", () -> .80, 0.01, 0.99);
+					.defineInRange("downModifier", () -> 20, 0, 100);
 
-			minDepthLimit = builder
-					.comment("Lowest Depth Y where modifiers stop getting harder")
-					.translation(Main.MODID + ".config." + "minDepthLimit")
-					.defineInRange("minDepthLimit", () -> -32, -2032, 32);
-			
 			normalOre = builder
 					.comment("Normal Ore Behavior: true")
 					.translation(Main.MODID + ".config." + "normalOre")
 					.define ("normalOre", () -> true);
 			builder.pop();
 			
-			builder.push ("Tool Values 6464 : tool,dimension,startY,Percent slower-exhaustion;");
-			toolsActual = builder
-					.comment("Tool String 6464")
-					.translation(Main.MODID + ".config" + "defaultToolsActual")
-					.define("defaultToolsActual", defaultTools6464);
+			builder.push ("Tool Config Values : tool,dimension , upperYlimit, lowerYlimit, exhaustion, pct slower;");
+
+			toolsList = builder
+					.comment("list of tool configurations")
+					.translation(Main.MODID + ".config" + "toolsList")
+					.defineList("toolsList", defaultToolsList, Common::isString);
+			
 			builder.pop();
 
-			builder.push ("Blocks White List Values 6464");
-			blocksWhiteListActual = builder
-					.comment("Blocks Whitelist String 6464")
-					.translation(Main.MODID + ".config" + "defaultBlocksWhiteListActual")
-					.define("defaultBlocksWhiteListActual", defaultBlocksWhiteList6464);
+			
+			
+			
+			builder.push ("Blocks Ignore List ");
+			ignoreBlocksList = builder
+					.comment("Blocks Ignored by Harder Branch Mining .")
+					.translation(Main.MODID + ".config" + "ignoreBlocksList")
+					.defineList("ignoreBlocksList", defaultIgnoreBlocksList, Common::isString);
 			builder.pop();
 
+		}
+		
+		public static boolean isString(Object o)
+		{
+			return (o instanceof String);
 		}
 
 	}
 	
 	public static final Common COMMON;
 	public static final ForgeConfigSpec COMMON_SPEC;
-
+	public static String exhaustionTypeDescriptions[] = new String []{"None","Proportional","Fixed"};
 	static
 	{
 		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
@@ -136,14 +139,40 @@ public class MyConfig
 	}
 	public static int       exhaustionType;
 	public static int       debugLevel;
-	public static double    downModifier;
-	public static double    digModifier;
-	public static int       minDepthLimit;
+	public static int getDebugLevel() {
+		return debugLevel;
+	}
+
+
+	public static void setDebugLevel(int debugLevel) {
+		MyConfig.debugLevel = debugLevel;
+	}
+
+
+	public static double getDownModifier() {
+		return (double) (downModifier * 0.01);
+	}
+
+	public static String getDownModifierAsString () {
+		return String.format("%5.2f%%", getDownModifier() );
+	}
+
+	public static void setDownModifier(int downModifier) {
+		MyConfig.downModifier = downModifier;
+	}
+
+	public static int getExhaustionType() {
+		return exhaustionType;
+	}
+
+	public static String getExhaustionTypeAsString() {
+		return exhaustionTypeDescriptions [exhaustionType];
+	}
+	
+	public static int       downModifier;
 	public static boolean   normalOreHandling;
-	public static String[]  aDefaultTools;
-	public static String    aDefaultTools6464;
-	public static String[]  aDefaultBlocksWhitelist;
-	public static String    aDefaultBlocksWhitelist6464;
+	public static String[]  defaultToolsStringArray;
+	public static String[]  ignoreBlocksStringArray;
 	public static final Boolean BOLD = true;
 	public static final int EXHAUSTION_OFF   = 0;
 	public static final int EXHAUSTION_DEPTH = 1;
@@ -153,7 +182,7 @@ public class MyConfig
 	// support for any color chattext
 	public static void sendChat(Player p, String chatMessage) {
 		TextComponent component = new TextComponent (chatMessage);
-		component.getStyle().withColor(TextColor.fromLegacyFormat(ChatFormatting.GRAY));
+		component.setStyle(component.getStyle().withColor(TextColor.fromLegacyFormat(ChatFormatting.GREEN)));
 		p.sendMessage(component, p.getUUID());
 	}
 
@@ -161,34 +190,47 @@ public class MyConfig
 	// support for any color chattext
 	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
 		TextComponent component = new TextComponent (chatMessage);
-		component.getStyle().withColor(TextColor.fromLegacyFormat(textColor));
+		component.setStyle( component.getStyle().withColor(TextColor.fromLegacyFormat(textColor)));
 		p.sendMessage(component, p.getUUID());
 	}
 	
 	// support for any color, optionally bold text.
 	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor, boolean boldText) {
 		TextComponent component = new TextComponent (chatMessage);
-		// set to Dark Green Bold
-		if (boldText) {
-			component.getStyle().withBold(true);
-		}
-		component.getStyle().withColor(TextColor.fromLegacyFormat(textColor));
-
+		component.setStyle(component.getStyle().withBold(boldText).withColor(TextColor.fromLegacyFormat(textColor)));
 		p.sendMessage(component, p.getUUID());
+	}
+	
+	// support for debug messages
+	public static void dbgPrintln(int dbgLevel, String dbgMsg) {
+		if (dbgLevel <= debugLevel) {
+			System.out.println (dbgMsg);
+		}
+	}
+
+	public static void dbgPrintln(int dbgLevel, Player p, String dbgMsg ) {
+		if (dbgLevel <= debugLevel ) {
+			sendChat (p, dbgMsg);	
+		}
 	}
 	
 	public static void bakeConfig()
 	{
 		exhaustionType = COMMON.exhaustionType.get();
 		debugLevel = COMMON.debugLevel.get();
-		digModifier = COMMON.digModifier.get();
 		downModifier = COMMON.downModifier.get();
-		minDepthLimit = COMMON.minDepthLimit.get();
 		normalOreHandling = COMMON.normalOre.get();		
-		aDefaultTools6464 = COMMON.toolsActual.get() ;
-		aDefaultBlocksWhitelist6464 = COMMON.blocksWhiteListActual.get() ;
-		System.out.println("HarderBranchMiningConfig Type:" + exhaustionType + ", Debug Level:" + debugLevel);
+		defaultToolsStringArray = extract(COMMON.toolsList.get());
+		ToolManager.initTools();
+		defaultToolsStringArray = extract(COMMON.toolsList.get());
+		ignoreBlocksStringArray = extract(COMMON.ignoreBlocksList.get());
+		IgnoreBlocksListManager.initIgnoreBlocksList();
 
+	}
+
+	private static String[] extract(List<? extends String> value)
+	{
+		return value.toArray(new String[value.size()]);
 	}
 	
 	@SubscribeEvent
@@ -197,30 +239,22 @@ public class MyConfig
 		if (configEvent.getConfig().getSpec() == MyConfig.COMMON_SPEC)
 		{
 			bakeConfig();
-			ToolManager.toolInit();
-			ManagerBlocksWhiteList.blocksWhitelistInit();
 		}
 	}
 
 	public static void pushValues() {
 		System.out.println("dbgL:"+MyConfig.debugLevel
 						 +" exhT:"+MyConfig.exhaustionType
-						 +" DigSM:" + MyConfig.digModifier
 						 +" DwnSM:" + MyConfig.downModifier
-						 +" MinDL:" + MyConfig.minDepthLimit
 						 +" NmOre:" + MyConfig.normalOreHandling );
 		int tdl = MyConfig.debugLevel;
 		int ext = MyConfig.exhaustionType;
-		double dgm = MyConfig.digModifier;
-		double dwm = MyConfig.downModifier;
-		int mdl = MyConfig.minDepthLimit;
+		int dwm = MyConfig.downModifier;
 		boolean noh = MyConfig.normalOreHandling;
 
 		COMMON.debugLevel.set( tdl );
 		COMMON.exhaustionType.set( ext );
-		COMMON.digModifier.set( dgm );
 		COMMON.downModifier.set( dwm );
-		COMMON.minDepthLimit.set( mdl );
 		COMMON.normalOre.set( noh );
 
 	}

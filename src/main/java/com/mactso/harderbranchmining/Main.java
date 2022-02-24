@@ -49,7 +49,7 @@ public class Main
 		@SubscribeEvent 
 		public static void onServerStarting (ServerStartingEvent event) {
 			System.out.println("HarderBranchMining: Initializing Toolmanager");
-			ToolManager.toolInit();
+			ToolManager.initTools();
 		}
     }
 }

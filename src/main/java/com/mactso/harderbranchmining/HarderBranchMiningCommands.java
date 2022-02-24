@@ -1,14 +1,16 @@
 package com.mactso.harderbranchmining;
 
 import com.mactso.harderbranchmining.config.MyConfig;
+import com.mactso.harderbranchmining.config.ToolManager;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
 public class HarderBranchMiningCommands {
@@ -22,25 +24,9 @@ public class HarderBranchMiningCommands {
 				return source.hasPermission(2);
 			}
 		)
-		.then(Commands.literal("digSpeed").then(
-			Commands.argument("digSpeed", DoubleArgumentType.doubleArg(1.0,16.0)).executes(ctx -> {
-				return setDigSpeed (DoubleArgumentType.getDouble(ctx, "digSpeed"));
-				// return 1;
-			}
-			)
-			)
-			)
 		.then(Commands.literal("downSpeed").then(
-				Commands.argument("downSpeed", DoubleArgumentType.doubleArg(1.0,16.0)).executes(ctx -> {
-					return setDownSpeed (DoubleArgumentType.getDouble(ctx, "downSpeed"));
-					// return 1;
-			}
-			)
-			)
-			)
-		.then(Commands.literal("minDepthLevel").then(
-				Commands.argument("minDepthLevel", IntegerArgumentType.integer(-2032,32)).executes(ctx -> {
-					return setMinDepthLimit(IntegerArgumentType.getInteger(ctx, "minDepthLevel"));
+				Commands.argument("downSpeed", IntegerArgumentType.integer(0,100)).executes(ctx -> {
+					return setDownSpeed (IntegerArgumentType.getInteger(ctx, "downSpeed"));
 					// return 1;
 			}
 			)
@@ -64,16 +50,27 @@ public class HarderBranchMiningCommands {
 			)
 		.then(Commands.literal("info").executes(ctx -> {
 					ServerPlayer serverPlayerEntity = (ServerPlayer) ctx.getSource().getEntity();
-					Level worldName = serverPlayerEntity.level;
-					String chatMessage = worldName.dimensionType().toString() 
-										+ "\n Current Values";
+					Level level = serverPlayerEntity.level;
+					Item tempItem = serverPlayerEntity.getMainHandItem().getItem();
+					ResourceKey<Level> dimensionKey = level.dimension();
+					String dimensionId = dimensionKey.location().toString();
+					ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName(), dimensionId);
+					float depthFactor = (float) Utility.calcDepthFactor(serverPlayerEntity.blockPosition().getY(), toolInfo);
+					if (depthFactor == -1) depthFactor = 0;
+					String chatMessage = "\n HarderBranchMining Info";
 					MyConfig.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN, MyConfig.BOLD);
 		            chatMessage = 
-		              		  "\n  Exhaustion Type.: " + MyConfig.exhaustionType
-		            		+ "\n  Debug Level...........: " + MyConfig.debugLevel
-		            		+ "\n  Dig Modifier.............: " + MyConfig.digModifier
-		            		+ "\n  Down Modifier........: " + MyConfig.downModifier
-		            		+ "\n  Min Depth Limit....: " + MyConfig.minDepthLimit;
+  	            		    "  Debug Level...................: " + MyConfig.getDebugLevel()
+		            		+ "\n  Exhaustion Type........: " + MyConfig.getExhaustionTypeAsString() + "(" +MyConfig.getExhaustionType() + ")"
+		            		+ "\n  Extra Down Modifier: " + MyConfig.getDownModifierAsString()
+		            		+ "\n  Dimension..........................: " + dimensionId
+		            		+ "\n  Tool Top Y.......................: " + toolInfo.getYModifierStart()
+		            	    + " -> Player Y: " + serverPlayerEntity.blockPosition().getY()
+		            	    + " -> Tool Bottom Y : " + toolInfo.getYModifierStop()
+		            		+ "\n  Tool Dig Modifier........: " + toolInfo.getDigModifierAsPercent() +" * " + 
+		            	    Utility.formatPercentage(depthFactor) + " = " + Utility.formatPercentage((float)(depthFactor*toolInfo.getDigModifier())) + " slower."
+		            		+ "\n  Tool Exhaustion..........: " + toolInfo.getExhaustionAmount()+" * " + 
+		            	    Utility.formatPercentage(depthFactor)+ " = " + (float)(depthFactor*toolInfo.getExhaustionAmount()) + " extra exhaustion.";
 		            		;
 					MyConfig.sendChat(serverPlayerEntity, chatMessage);
 		            return 1;
@@ -84,23 +81,11 @@ public class HarderBranchMiningCommands {
 
 	}
 	
-	public static int setDigSpeed (double newDigSpeed) {
-			MyConfig.digModifier = newDigSpeed;
-			MyConfig.pushValues();
-		return 1;
-	}
-
-	public static int setDownSpeed (double newDownSpeed) {
+	public static int setDownSpeed (int newDownSpeed) {
 		MyConfig.downModifier = newDownSpeed;
 		MyConfig.pushValues();
 	return 1;
 	}	
-
-	public static int setMinDepthLimit (int minDepthLimit) {
-		MyConfig.minDepthLimit = minDepthLimit;
-		MyConfig.pushValues();
-	return 1;
-}
 	
 	public static int setDebugLevel (int newDebugLevel) {
 		MyConfig.debugLevel = newDebugLevel;
