@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.RedStoneOreBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -65,7 +64,7 @@ public class BlockBreakHandler {
 		Item tempItem = p.getMainHandItem().getItem();
 
 		// domain:tool:dimension
-		DimensionType dimensionType = p.level.dimensionType();
+
 		ResourceKey<Level> dimensionKey = p.level.dimension();
 		String dimensionId = dimensionKey.location().toString();
 		ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName(), dimensionId);
@@ -211,7 +210,8 @@ public class BlockBreakHandler {
 			return true;
 		}
 		// f230235_a_ == ".contains()"
-		if ((Tags.Blocks.ORES).contains(block)) {
+		
+		if (block.defaultBlockState().is(Tags.Blocks.ORES)) {
 			if ((MyConfig.debugLevel > 1) && (debugLimiter++ > 39)) {
 				MyConfig.sendChat(p, block.getDescriptionId().toString() + " is in the Ore block tags.");
 				debugLimiter = 0;

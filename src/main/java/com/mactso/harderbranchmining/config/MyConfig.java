@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mactso.harderbranchmining.Main;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
