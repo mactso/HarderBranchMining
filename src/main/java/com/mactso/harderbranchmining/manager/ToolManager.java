@@ -1,11 +1,13 @@
 //1.15.2-2.0
-package com.mactso.harderbranchmining.config;
+package com.mactso.harderbranchmining.manager;
 
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mactso.harderbranchmining.config.MyConfig;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;

@@ -1,14 +1,18 @@
-package com.mactso.harderbranchmining;
+package com.mactso.harderbranchmining.commands;
 
 import com.mactso.harderbranchmining.config.MyConfig;
-import com.mactso.harderbranchmining.config.ToolManager;
+import com.mactso.harderbranchmining.manager.ToolManager;
+import com.mactso.harderbranchmining.utility.Utility;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -52,13 +56,18 @@ public class HarderBranchMiningCommands {
 					ServerPlayer serverPlayerEntity = (ServerPlayer) ctx.getSource().getEntity();
 					Level level = serverPlayerEntity.level;
 					Item tempItem = serverPlayerEntity.getMainHandItem().getItem();
+					
 					ResourceKey<Level> dimensionKey = level.dimension();
 					String dimensionId = dimensionKey.location().toString();
-					ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName(), dimensionId);
+	
+					RegistryAccess dynreg = serverPlayerEntity.getLevel().getServer().registryAccess();
+					Registry<Item> itemRegistry =  dynreg.registryOrThrow(Registry.ITEM_REGISTRY);
+					ResourceLocation key = itemRegistry.getKey(tempItem);
+					ToolManager.toolItem toolInfo = ToolManager.getToolInfo(key, dimensionId);
 					float depthFactor = (float) Utility.calcDepthFactor(serverPlayerEntity.blockPosition().getY(), toolInfo);
 					if (depthFactor == -1) depthFactor = 0;
 					String chatMessage = "\n HarderBranchMining Info";
-					MyConfig.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN, MyConfig.BOLD);
+					Utility.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN);
 		            chatMessage = 
   	            		    "  Debug Level...................: " + MyConfig.getDebugLevel()
 		            		+ "\n  Exhaustion Type........: " + MyConfig.getExhaustionTypeAsString() + "(" +MyConfig.getExhaustionType() + ")"
@@ -72,7 +81,7 @@ public class HarderBranchMiningCommands {
 		            		+ "\n  Tool Exhaustion..........: " + toolInfo.getExhaustionAmount()+" * " + 
 		            	    Utility.formatPercentage(depthFactor)+ " = " + (float)(depthFactor*toolInfo.getExhaustionAmount()) + " extra exhaustion.";
 		            		;
-					MyConfig.sendChat(serverPlayerEntity, chatMessage);
+					Utility.sendChat(serverPlayerEntity, chatMessage);
 		            return 1;
 			}
 			)

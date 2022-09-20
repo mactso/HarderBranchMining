@@ -1,10 +1,10 @@
 //1.15.2-2.0.0.3
 package com.mactso.harderbranchmining.event;
 
-import com.mactso.harderbranchmining.Utility;
-import com.mactso.harderbranchmining.config.IgnoreBlocksListManager;
 import com.mactso.harderbranchmining.config.MyConfig;
-import com.mactso.harderbranchmining.config.ToolManager;
+import com.mactso.harderbranchmining.manager.IgnoreBlocksListManager;
+import com.mactso.harderbranchmining.manager.ToolManager;
+import com.mactso.harderbranchmining.utility.Utility;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -15,12 +15,11 @@ import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.RedStoneOreBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -50,11 +49,11 @@ public class BlockBreakHandler {
 
 		// no exhaustion for soft items.
 
-		float hardness = event.getState().getDestroySpeed(event.getWorld(), event.getPos());
-		if (1 >= event.getState().getDestroySpeed(event.getWorld(), event.getPos())) {
+		float hardness = event.getState().getDestroySpeed(event.getLevel(), event.getPos());
+		if (1 >= event.getState().getDestroySpeed(event.getLevel(), event.getPos())) {
 			
 			if (MyConfig.debugLevel > 1) {
-				MyConfig.sendChat(p, "Block Broken! Soft Block.  No Exhaustion.",ChatFormatting.GOLD, MyConfig.BOLD );
+				Utility.sendChat(p, "Block Broken! Soft Block.  No Exhaustion.",ChatFormatting.GOLD );
 			}
 			return;
 		}
@@ -67,7 +66,9 @@ public class BlockBreakHandler {
 
 		ResourceKey<Level> dimensionKey = p.level.dimension();
 		String dimensionId = dimensionKey.location().toString();
-		ToolManager.toolItem toolInfo = ToolManager.getToolInfo(tempItem.getRegistryName(), dimensionId);
+
+		ResourceLocation itemKey = tempItem.builtInRegistryHolder().key().location();
+		ToolManager.toolItem toolInfo = ToolManager.getToolInfo(itemKey, dimensionId);
 		
 		if (event.getPos().getY() > toolInfo.getYModifierStart()) {
 			return;
@@ -91,8 +92,8 @@ public class BlockBreakHandler {
 					.println("Block Broken! Player:" + p.getName().getString().toString() + ", Dimension:" + dimensionId
 							+ ", Pos:" + event.getPos() + ", extraExhaustion:" + extraExhaustion);
 			if (MyConfig.debugLevel > 1) {
-				MyConfig.sendChat(p, "\nBlock Broken! with " + tempItem.getRegistryName().toString(),ChatFormatting.GOLD,MyConfig.BOLD);
-				MyConfig.sendChat(p,"Dimension   :" + dimensionId 
+				Utility.sendChat(p, "\nBlock Broken! with " + itemKey.toString(),ChatFormatting.GOLD);
+				Utility.sendChat(p,"Dimension   :" + dimensionId 
 								+ " at Depth       :"
 								+ event.getPos().getY()  
 								+ "\nExtra Exhaustion:"
@@ -109,13 +110,13 @@ public class BlockBreakHandler {
 		double depthFactor = 0.0;
 		String debugWorldName = "server-local ";
 
-		if (event.getPlayer() == null) {
+		if (event.getEntity() == null) {
 			return;
-		} else if (event.getPlayer().isCreative()) {
+		} else if (event.getEntity().isCreative()) {
 			return;
 		}
 
-		Player p = event.getPlayer();
+		Player p = event.getEntity();
 		if (p.level.isClientSide()) {
 			debugWorldName = "client-remote ";
 		}
@@ -137,6 +138,7 @@ public class BlockBreakHandler {
 		
 		// no exhaustion for whitelist items.
 		// no slowdown for soft items.
+
 		if (isSoftBlock(event.getPos(), event.getState(), p) || (isSkipBlock(debugWorldName, p, block))) {
 			return;
 		}
@@ -145,27 +147,31 @@ public class BlockBreakHandler {
 
 		ResourceKey<Level> dimensionKey = p.level.dimension();
 		String dimensionId = dimensionKey.location().toString();
-		ResourceLocation key = playerItem.getRegistryName();
-		ToolManager.toolItem toolInfo = ToolManager.getToolInfo(key, dimensionId);
+
+		@SuppressWarnings("deprecation")
+		ResourceLocation itemKey = playerItem.builtInRegistryHolder().key().location();
+
+
+		ToolManager.toolItem toolInfo = ToolManager.getToolInfo(itemKey, dimensionId);
 
 		depthFactor = Utility.calcDepthFactor(event.getPos().getY(), toolInfo);
-		int y = 5;
+
 		if (depthFactor == -1.0) {
 			return;
 		}
 
 		double newDestroySpeed = calcNewDestroySpeed(event, depthFactor, p, toolInfo);
 		
-		y = 3;
+
 		if (newDestroySpeed > 0) {
 			event.setNewSpeed((float) newDestroySpeed);
 		}
 
 		if (MyConfig.debugLevel > 0) {
 			if (debugLimiter++ > 5) { // debugLimiter to avoid spamming chat window
-				logDebugInfo(event, depthFactor, p, dimensionId, key, toolInfo);
+				logDebugInfo(event, depthFactor, p, dimensionId, itemKey, toolInfo);
 
-				chatDebugInfo(event, depthFactor, p, dimensionId, key, toolInfo);
+				chatDebugInfo(event, depthFactor, p, dimensionId, itemKey, toolInfo);
 				
 				
 				debugLimiter = 0;
@@ -205,7 +211,7 @@ public class BlockBreakHandler {
 	private boolean isSkipBlock(String debugWorldName, Player p, Block block) {
 		if (IgnoreBlocksListManager.ignoreBlocksListHashSet.contains(block)) {
 			if (MyConfig.debugLevel > 1) {
-				MyConfig.sendChat(p, debugWorldName + ", Breaking Whitelist Block at normal speed.");
+				Utility.sendChat(p, debugWorldName + ", Breaking Whitelist Block at normal speed.");
 			}
 			return true;
 		}
@@ -213,16 +219,16 @@ public class BlockBreakHandler {
 		
 		if (block.defaultBlockState().is(Tags.Blocks.ORES)) {
 			if ((MyConfig.debugLevel > 1) && (debugLimiter++ > 39)) {
-				MyConfig.sendChat(p, block.getDescriptionId().toString() + " is in the Ore block tags.");
+				Utility.sendChat(p, block.getDescriptionId().toString() + " is in the Ore block tags.");
 				debugLimiter = 0;
 			}
 			return true;
 		}
 		// no exhaustion for ore block items.
-		if ((block instanceof RedStoneOreBlock) || (block instanceof OreBlock)) {
+		if ((block instanceof RedStoneOreBlock) || (block.defaultBlockState().is(Tags.Blocks.ORES))) {
 			if (MyConfig.normalOreHandling) {
 				if ((MyConfig.debugLevel > 1) && (debugLimiter++ > 39)) {
-					MyConfig.sendChat(p, "Breaking Ore Block full speed with no speed adjust true.");
+					Utility.sendChat(p, "Breaking Ore Block full speed with no speed adjust true.");
 					debugLimiter = 0;
 				}
 				return true;
@@ -234,35 +240,35 @@ public class BlockBreakHandler {
 
 	private void chatDebugInfo(PlayerEvent.BreakSpeed event, double depthFactor, Player p, String dimensionId,
 			ResourceLocation key, ToolManager.toolItem toolInfo) {
-		MyConfig.dbgPrintln(2, p," ");
-		MyConfig.dbgPrintln(2, p, key.toString() +":"+dimensionId + " \nExtra Exhaustion:" +toolInfo.getExhaustionAmount()+" " );
+		Utility.debugMsg(2, p," ");
+		Utility.debugMsg(2, p, key.toString() +":"+dimensionId + " \nExtra Exhaustion:" +toolInfo.getExhaustionAmount()+" " );
 		String depthFactorF = String.format("%5.2f%%", 100*depthFactor);
-		MyConfig.dbgPrintln(2, p, "Y altitude Info (" + toolInfo.getYModifierStart() + " -> " + event.getPos().getY() + " -> " + toolInfo.getYModifierStop()+ ") giving " + depthFactorF + " of modifiers." );
+		Utility.debugMsg(2, p, "Y altitude Info (" + toolInfo.getYModifierStart() + " -> " + event.getPos().getY() + " -> " + toolInfo.getYModifierStop()+ ") giving " + depthFactorF + " of modifiers." );
 
 		double toolDigMod = (toolInfo.getDigModifier()) * depthFactor;
 		String toolDigModF = String.format("%5.2f%%", 100*toolDigMod );
-		MyConfig.dbgPrintln(2, p, "Tool DigMod : " + toolInfo.getDigModifierAsPercent() +" Actually Slowed ("+ toolDigModF + ") at Y="+ event.getPos().getY() +")."); 
+		Utility.debugMsg(2, p, "Tool DigMod : " + toolInfo.getDigModifierAsPercent() +" Actually Slowed ("+ toolDigModF + ") at Y="+ event.getPos().getY() +")."); 
 
 		if (event.getPos().getY() < p.getY()) {
 			String globalDownRawF = MyConfig.getDownModifierAsString();
 			String globalDownModF = String.format("%5.2f%%", MyConfig.getDownModifier()*depthFactor );
-			MyConfig.dbgPrintln(2, p, " Down Modifier: " + globalDownRawF + " Slowed ("+globalDownModF+") more.") ;
+			Utility.debugMsg(2, p, " Down Modifier: " + globalDownRawF + " Slowed ("+globalDownModF+") more.") ;
 			
 		}
-		MyConfig.dbgPrintln(2, p, "Starting Breaking Speed: " + event.getOriginalSpeed() + " Final Breaking Speed: " + event.getNewSpeed());
+		Utility.debugMsg(2, p, "Starting Breaking Speed: " + event.getOriginalSpeed() + " Final Breaking Speed: " + event.getNewSpeed());
 
 	}
 
 	private void logDebugInfo(PlayerEvent.BreakSpeed event, double depthFactor, Player p, String dimensionId,
 			ResourceLocation key, ToolManager.toolItem toolInfo) {
-		MyConfig.dbgPrintln(1, key.toString() +":"+dimensionId + " (" + toolInfo.getYModifierStart() + " -> " + event.getPos().getY() + " -> " + toolInfo.getYModifierStop() +
+		Utility.debugMsg(1, key.toString() +":"+dimensionId + " (" + toolInfo.getYModifierStart() + " -> " + event.getPos().getY() + " -> " + toolInfo.getYModifierStop() +
 				"\nExtra Exhaustion:" +toolInfo.getExhaustionAmount() );
 
-		MyConfig.dbgPrintln(1, "Tool DigMod: -" + toolInfo.getDigModifierAsPercent() +  "."); 
+		Utility.debugMsg(1, "Tool DigMod: -" + toolInfo.getDigModifierAsPercent() +  "."); 
 		if (event.getPos().getY() < p.getY()) {
-			MyConfig.dbgPrintln(1, "\nExtra Downward Modifier digging Lower block.: " + MyConfig.downModifier) ;
+			Utility.debugMsg(1, "\nExtra Downward Modifier digging Lower block.: " + MyConfig.downModifier) ;
 		}
-		MyConfig.dbgPrintln(1, "Starting Breaking Speed : " + event.getOriginalSpeed() + " Final Breaking Speed:" + event.getNewSpeed());
+		Utility.debugMsg(1, "Starting Breaking Speed : " + event.getOriginalSpeed() + " Final Breaking Speed:" + event.getNewSpeed());
 
 	}
 	

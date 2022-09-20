@@ -7,11 +7,9 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mactso.harderbranchmining.Main;
+import com.mactso.harderbranchmining.manager.IgnoreBlocksListManager;
+import com.mactso.harderbranchmining.manager.ToolManager;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -173,46 +171,10 @@ public class MyConfig
 	public static boolean   normalOreHandling;
 	public static String[]  defaultToolsStringArray;
 	public static String[]  ignoreBlocksStringArray;
-	public static final Boolean BOLD = true;
 	public static final int EXHAUSTION_OFF   = 0;
 	public static final int EXHAUSTION_DEPTH = 1;
 	public static final int EXHAUSTION_FIXED = 2;
 
-    // for this mod- default color is green.
-	// support for any color chattext
-	public static void sendChat(Player p, String chatMessage) {
-		TextComponent component = new TextComponent (chatMessage);
-		component.setStyle(component.getStyle().withColor(TextColor.fromLegacyFormat(ChatFormatting.GREEN)));
-		p.sendMessage(component, p.getUUID());
-	}
-
-
-	// support for any color chattext
-	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
-		TextComponent component = new TextComponent (chatMessage);
-		component.setStyle( component.getStyle().withColor(TextColor.fromLegacyFormat(textColor)));
-		p.sendMessage(component, p.getUUID());
-	}
-	
-	// support for any color, optionally bold text.
-	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor, boolean boldText) {
-		TextComponent component = new TextComponent (chatMessage);
-		component.setStyle(component.getStyle().withBold(boldText).withColor(TextColor.fromLegacyFormat(textColor)));
-		p.sendMessage(component, p.getUUID());
-	}
-	
-	// support for debug messages
-	public static void dbgPrintln(int dbgLevel, String dbgMsg) {
-		if (dbgLevel <= debugLevel) {
-			System.out.println (dbgMsg);
-		}
-	}
-
-	public static void dbgPrintln(int dbgLevel, Player p, String dbgMsg ) {
-		if (dbgLevel <= debugLevel ) {
-			sendChat (p, dbgMsg);	
-		}
-	}
 	
 	public static void bakeConfig()
 	{

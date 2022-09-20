@@ -1,10 +1,12 @@
 //1.15.2 
-package com.mactso.harderbranchmining.config;
+package com.mactso.harderbranchmining.manager;
 
 import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mactso.harderbranchmining.config.MyConfig;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.AirBlock;

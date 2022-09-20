@@ -4,9 +4,11 @@ package com.mactso.harderbranchmining;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 
+import com.mactso.harderbranchmining.commands.HarderBranchMiningCommands;
 import com.mactso.harderbranchmining.config.MyConfig;
-import com.mactso.harderbranchmining.config.ToolManager;
 import com.mactso.harderbranchmining.event.BlockBreakHandler;
+import com.mactso.harderbranchmining.manager.ToolManager;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
