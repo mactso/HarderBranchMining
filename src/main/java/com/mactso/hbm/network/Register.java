@@ -8,7 +8,7 @@ public class Register {
 
 	public static void initPackets()
 	{
-		if (MyConfig.aDebugLevel>0) {
+		if (MyConfig.debugLevel>0) {
 			System.out.println ("HBM: Register Client message");
 		}
 	    Manager.registerClientMessage(HBMPacket.class, HBMHandler.class);

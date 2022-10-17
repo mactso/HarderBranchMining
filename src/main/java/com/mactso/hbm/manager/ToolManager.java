@@ -1,9 +1,13 @@
-package com.mactso.hbm.config;
+package com.mactso.hbm.manager;
 
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
-public class toolManager {
+import com.mactso.hbm.config.MyConfig;
+
+public class ToolManager {
 	public static Hashtable<String, toolItem> toolHashtable = new Hashtable<>();
 	private static String defaultToolString = "hbm:default";
 	private static int defaultToolDimension = 0;
@@ -11,6 +15,7 @@ public class toolManager {
 	
 	public static toolItem getToolInfo(String key, int dim) {
 		String iKey = key + ":" + dim;
+
 		toolItem t = toolHashtable.get(iKey);
 		if (t==null) {
 			iKey = key + ":" + "0";
@@ -21,13 +26,15 @@ public class toolManager {
 		}
 		return t;
 	}
+
+
 	
 	public static void toolInit () {
 		int i = 0;
 		toolHashtable.clear();
-		while (i < MyConfig.aDefaultTools.length) {
+		while (i < MyConfig.defaultTools.length) {
 			try {
-				StringTokenizer st = new StringTokenizer(MyConfig.aDefaultTools[i], ",");
+				StringTokenizer st = new StringTokenizer(MyConfig.defaultTools[i], ",");
 				String key = st.nextToken() + ":" + st.nextToken();
 				double tExhaustionY = Double.parseDouble(st.nextToken());
 				if ((tExhaustionY < 5.0) || (tExhaustionY > 255.0)) {
@@ -41,7 +48,7 @@ public class toolManager {
 				toolHashtable.put(key, new toolItem (tExhaustionY, tExhaustionAmt));
 			}
 			catch (Exception e) {
-				System.out.println("HarderBranchMining: Bad Tool Config : " + MyConfig.aDefaultTools[i]);
+				System.out.println("HarderBranchMining: Bad Tool Config : " + MyConfig.defaultTools[i]);
 			}
 			i++;
 		}
@@ -54,6 +61,7 @@ public class toolManager {
 
 	}
 	
+
 	public static class toolItem {
 		double toolExhaustionY;
 		double toolExhaustionAmount;
@@ -72,6 +80,25 @@ public class toolManager {
 		 */
 		public double getExhaustionAmt () {
 			return toolExhaustionAmount;
+		}
+		
+		public boolean isExhaustionRange (int y) {
+			if (y <= toolExhaustionY) {
+				return true;
+			}
+			return false;
+		}
+		
+		public double toolExtraExhaustion (int y) {
+			if (y >= toolExhaustionY) return 0;
+			return (toolExhaustionAmount *  toolDepthModifier(y));
+		}
+		
+		public double toolDepthModifier(int y) {
+			if (y<5) {
+				y=5; 	// handle cubic chunks
+			}
+			return (y/toolExhaustionY);
 		}
 	 
 	}

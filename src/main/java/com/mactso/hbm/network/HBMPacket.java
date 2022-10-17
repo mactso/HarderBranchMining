@@ -44,15 +44,15 @@ public class HBMPacket implements IMessage
 		@Override
 		public IMessage onMessage(HBMPacket message, MessageContext ctx)
 		{
-			if (MyConfig.aDebugLevel>0) {
+			if (MyConfig.debugLevel>0) {
 				System.out.println("Message dig: " + message.aDigSpeedModifier);
 				System.out.println("Message down: " + message.aDownSpeedModifier);
 			}
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				MyConfig.serverDigSpeed = message.aDigSpeedModifier;
-				MyConfig.aDigSpeedModifier = message.aDigSpeedModifier;				
+				MyConfig.digSpeedModifier = message.aDigSpeedModifier;				
 				MyConfig.serverDownSpeed = message.aDigSpeedModifier;
-				MyConfig.aDownSpeedModifier = message.aDownSpeedModifier;	
+				MyConfig.downSpeedModifier = message.aDownSpeedModifier;	
 			});
 			return null;	
 		}
