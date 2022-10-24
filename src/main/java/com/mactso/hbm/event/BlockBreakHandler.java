@@ -134,7 +134,7 @@ public class BlockBreakHandler {
 			newDestroySpeed = newDestroySpeed / (float) MyConfig.downSpeedModifier;
 		}
 
-		Utility.sendDbgChat(0, player, "y: " + y + " Dig Speed " + (int) (newDestroySpeed/event.getOriginalSpeed()*100) + "% as fast.  toolDepthModifer:" + (float) toolInfo.toolDepthModifier(y)
+		Utility.sendDbgChat(2, player, "y: " + y + " Dig Speed " + (int) (newDestroySpeed/event.getOriginalSpeed()*100) + "% as fast.  toolDepthModifer:" + (float) toolInfo.toolDepthModifier(y)
 				+ ", baseDestroy: " + event.getOriginalSpeed() + ", newdestroy:" + newDestroySpeed);
 		if (newDestroySpeed > 0) {
 			event.setNewSpeed(newDestroySpeed);
