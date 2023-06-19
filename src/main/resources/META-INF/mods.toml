@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[41,)"
+loaderVersion="[46,)"
 license="MIT License"
 [[mods]]
 modId="harderbranchmining"
@@ -13,13 +13,13 @@ description='''Harder Branch Mining Mod.'''
 [[dependencies.harderbranchmining]]
     modId="forge"
     mandatory=true
-    versionRange="[41,)"
+    versionRange="[46,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.harderbranchmining]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19,1.20)"
+    versionRange="[1.20,1.21)"
     ordering="NONE"
     side="BOTH"

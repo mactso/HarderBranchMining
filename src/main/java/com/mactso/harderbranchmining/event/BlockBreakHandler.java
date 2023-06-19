@@ -64,7 +64,7 @@ public class BlockBreakHandler {
 
 		// domain:tool:dimension
 
-		ResourceKey<Level> dimensionKey = p.level.dimension();
+		ResourceKey<Level> dimensionKey = p.level().dimension();
 		String dimensionId = dimensionKey.location().toString();
 
 		ResourceLocation itemKey = tempItem.builtInRegistryHolder().key().location();
@@ -117,7 +117,7 @@ public class BlockBreakHandler {
 		}
 
 		Player p = event.getEntity();
-		if (p.level.isClientSide()) {
+		if (p.level().isClientSide()) {
 			debugWorldName = "client-remote ";
 		}
 
@@ -139,13 +139,13 @@ public class BlockBreakHandler {
 		// no exhaustion for whitelist items.
 		// no slowdown for soft items.
 
-		if (isSoftBlock(event.getPos(), event.getState(), p) || (isSkipBlock(debugWorldName, p, block))) {
+		if (isSoftBlock(event.getPosition().get(), event.getState(), p) || (isSkipBlock(debugWorldName, p, block))) {
 			return;
 		}
 
 		// key = moddomain:tool,dimension
 
-		ResourceKey<Level> dimensionKey = p.level.dimension();
+		ResourceKey<Level> dimensionKey = p.level().dimension();
 		String dimensionId = dimensionKey.location().toString();
 
 		@SuppressWarnings("deprecation")
@@ -154,7 +154,8 @@ public class BlockBreakHandler {
 
 		ToolManager.toolItem toolInfo = ToolManager.getToolInfo(itemKey, dimensionId);
 
-		depthFactor = Utility.calcDepthFactor(event.getPos().getY(), toolInfo);
+
+		depthFactor = Utility.calcDepthFactor(event.getPosition().get().getY(), toolInfo);
 
 		if (depthFactor == -1.0) {
 			return;
@@ -189,7 +190,7 @@ public class BlockBreakHandler {
 			newDestroySpeed -= newDestroySpeed * depthFactor * toolInfo.getDigModifier();
 		} 
 		
-		if (event.getPos().getY() < p.getY() && MyConfig.downModifier >= 0) {
+		if (event.getPosition().get().getY() < p.getY() && MyConfig.downModifier >= 0) {
 			newDestroySpeed -= newDestroySpeed * depthFactor * (MyConfig.downModifier * 0.01);
 		}
 		int y = 6;
@@ -200,7 +201,7 @@ public class BlockBreakHandler {
 
 	private boolean isSoftBlock(BlockPos pos, BlockState s, Player p) {
 
-		double hardness = s.getDestroySpeed(p.level, pos);
+		double hardness = s.getDestroySpeed(p.level(), pos);
 		// Block debugBlock = event.getState().getBlock();
 		if (hardness > 1.0) {
 			return false;
@@ -243,13 +244,13 @@ public class BlockBreakHandler {
 		Utility.debugMsg(2, p," ");
 		Utility.debugMsg(2, p, key.toString() +":"+dimensionId + " \nExtra Exhaustion:" +toolInfo.getExhaustionAmount()+" " );
 		String depthFactorF = String.format("%5.2f%%", 100*depthFactor);
-		Utility.debugMsg(2, p, "Y altitude Info (" + toolInfo.getYModifierStart() + " -> " + event.getPos().getY() + " -> " + toolInfo.getYModifierStop()+ ") giving " + depthFactorF + " of modifiers." );
+		Utility.debugMsg(2, p, "Y altitude Info (" + toolInfo.getYModifierStart() + " -> " + event.getPosition().get().getY() + " -> " + toolInfo.getYModifierStop()+ ") giving " + depthFactorF + " of modifiers." );
 
 		double toolDigMod = (toolInfo.getDigModifier()) * depthFactor;
 		String toolDigModF = String.format("%5.2f%%", 100*toolDigMod );
-		Utility.debugMsg(2, p, "Tool DigMod : " + toolInfo.getDigModifierAsPercent() +" Actually Slowed ("+ toolDigModF + ") at Y="+ event.getPos().getY() +")."); 
+		Utility.debugMsg(2, p, "Tool DigMod : " + toolInfo.getDigModifierAsPercent() +" Actually Slowed ("+ toolDigModF + ") at Y="+ event.getPosition().get().getY() +")."); 
 
-		if (event.getPos().getY() < p.getY()) {
+		if (event.getPosition().get().getY() < p.getY()) {
 			String globalDownRawF = MyConfig.getDownModifierAsString();
 			String globalDownModF = String.format("%5.2f%%", MyConfig.getDownModifier()*depthFactor );
 			Utility.debugMsg(2, p, " Down Modifier: " + globalDownRawF + " Slowed ("+globalDownModF+") more.") ;
@@ -261,11 +262,11 @@ public class BlockBreakHandler {
 
 	private void logDebugInfo(PlayerEvent.BreakSpeed event, double depthFactor, Player p, String dimensionId,
 			ResourceLocation key, ToolManager.toolItem toolInfo) {
-		Utility.debugMsg(1, key.toString() +":"+dimensionId + " (" + toolInfo.getYModifierStart() + " -> " + event.getPos().getY() + " -> " + toolInfo.getYModifierStop() +
+		Utility.debugMsg(1, key.toString() +":"+dimensionId + " (" + toolInfo.getYModifierStart() + " -> " + event.getPosition().get().getY() + " -> " + toolInfo.getYModifierStop() +
 				"\nExtra Exhaustion:" +toolInfo.getExhaustionAmount() );
 
 		Utility.debugMsg(1, "Tool DigMod: -" + toolInfo.getDigModifierAsPercent() +  "."); 
-		if (event.getPos().getY() < p.getY()) {
+		if (event.getPosition().get().getY() < p.getY()) {
 			Utility.debugMsg(1, "\nExtra Downward Modifier digging Lower block.: " + MyConfig.downModifier) ;
 		}
 		Utility.debugMsg(1, "Starting Breaking Speed : " + event.getOriginalSpeed() + " Final Breaking Speed:" + event.getNewSpeed());
