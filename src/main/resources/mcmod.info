@@ -1,9 +1,9 @@
 [
 {
-  "modid": "hbm",
+  "modid": "harderbranchmining",
   "name": "Harder Branch Mining",
   "description": "Harder Branch Mining 1.12",
-  "version": "2.0.0.16",
+  "version": "2.0.0.17",
   "mcversion": "1.12.2",
   "url": "",
   "updateUrl": "",

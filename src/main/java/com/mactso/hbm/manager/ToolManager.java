@@ -1,8 +1,6 @@
 package com.mactso.hbm.manager;
 
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import com.mactso.hbm.config.MyConfig;

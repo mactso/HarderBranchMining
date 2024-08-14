@@ -29,18 +29,20 @@ public class BlockBreakHandler {
 	public void blockBreak(BlockEvent.BreakEvent event) {
 
 		EntityPlayer player = event.getPlayer();
-
+		
 		if (player == null) {
 			return;
 		} else if (player.isCreative()) {
 			return;
 		}
 
+		
 		if (MyConfig.aExhaustionType == MyConfig.EXHAUSTION_OFF) {
 			Utility.sendDbgChat(1, player, "Exhaustion is turned off");
 			return;
 		}
-
+		
+		// no exhaustion for soft items.
 		if (isSoftBlock(event.getPos(), event.getState(), player)
 				|| (isSkipBlock("calc Exhaustion", player, event.getState().getBlock()))) {
 			return;

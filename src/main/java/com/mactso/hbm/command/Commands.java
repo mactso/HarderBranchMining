@@ -6,7 +6,6 @@ import java.util.List;
 import com.mactso.hbm.config.MyConfig;
 import com.mactso.hbm.manager.ExcludeListManager;
 import com.mactso.hbm.manager.IncludeListManager;
-import com.mactso.hbm.manager.ToolManager;
 import com.mactso.hbm.utility.Utility;
 
 import net.minecraft.command.CommandException;
