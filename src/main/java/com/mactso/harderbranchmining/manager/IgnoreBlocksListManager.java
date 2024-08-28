@@ -26,7 +26,7 @@ public class IgnoreBlocksListManager {
 		while (i < MyConfig.ignoreBlocksStringArray.length) {
 			try {
 				String key = MyConfig.ignoreBlocksStringArray[i];
-				Block ignoreBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation (key) );
+				Block ignoreBlock = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(key) );
 				if ((ignoreBlock != null) && (!(ignoreBlock instanceof AirBlock))) {
 					ignoreBlocksListHashSet.add(ignoreBlock);
 				} else {

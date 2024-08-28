@@ -58,7 +58,7 @@ public class ToolManager {
 
 	}
 	public static Hashtable<String, toolItem> toolHashtable = new Hashtable<>();
-	private static final ResourceLocation defaultToolString = new ResourceLocation("hbm:default");
+	private static final ResourceLocation defaultToolString = ResourceLocation.parse("hbm:default");
 	private static final String defaultToolDimensionID = "hbm:default_dimension"; // OVERWORLD
 
 	private static String defaultToolKey = defaultToolString + ":" + defaultToolDimensionID;
@@ -142,7 +142,7 @@ public class ToolManager {
 				toolHashtable.put(key, new toolItem(toolYModifierStart, toolYModifierStop, tExhaustionAmt, tDigModifier));
 				if (!modAndTool.contentEquals("hbm:default1") &&
 				    !modAndTool.endsWith(":*") &&
-				    !ForgeRegistries.ITEMS.containsKey(new ResourceLocation(modAndTool))
+				    !ForgeRegistries.ITEMS.containsKey(ResourceLocation.parse(modAndTool))
 				   )  {
 					LOGGER.warn("HarderBranchMining: Tool: " + modAndTool + " not in Forge Registry.  Mispelled?");
 				}
