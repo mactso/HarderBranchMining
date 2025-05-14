@@ -4,9 +4,9 @@
   <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.minecraftforge.bootstrap.ForgeBootstrap"/>
   <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=REGISTRIES -Dforge.enabledGameTestNamespaces=harderbranchmining -Djava.net.preferIPv6Addresses=system"/>
   <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--launchTarget forge_userdev_server_gametest --gameDir ."/>
-  <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="C:\Workspaces\Minecraft\Forge\1.21.1\HarderBranchMining\HarderBranchMining\run"/>
+  <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="C:\Workspaces\Minecraft\Forge\1.21.4\HarderBranchMining\HarderBranchMining\run"/>
   <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-    <mapEntry key="MOD_CLASSES" value="C:\Workspaces\Minecraft\Forge\1.21.1\HarderBranchMining\HarderBranchMining\bin\main;C:\Workspaces\Minecraft\Forge\1.21.1\HarderBranchMining\HarderBranchMining\bin\main"/>
-    <mapEntry key="MCP_MAPPINGS" value="official_1.21.1"/>
+    <mapEntry key="MOD_CLASSES" value="C:\Workspaces\Minecraft\Forge\1.21.4\HarderBranchMining\HarderBranchMining\bin\main;C:\Workspaces\Minecraft\Forge\1.21.4\HarderBranchMining\HarderBranchMining\bin\main"/>
+    <mapEntry key="MCP_MAPPINGS" value="official_1.21.4"/>
   </mapAttribute>
 </launchConfiguration>

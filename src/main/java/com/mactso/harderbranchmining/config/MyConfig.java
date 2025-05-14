@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.mactso.harderbranchmining.Main;
 import com.mactso.harderbranchmining.manager.IgnoreBlocksListManager;
 import com.mactso.harderbranchmining.manager.ToolManager;
+import com.mactso.harderbranchmining.utility.Utility;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
@@ -205,7 +206,7 @@ public class MyConfig
 	}
 
 	public static void pushValues() {
-		System.out.println("dbgL:"+MyConfig.debugLevel
+		Utility.debugMsg(0, "dbgL:"+MyConfig.debugLevel
 						 +" exhT:"+MyConfig.exhaustionType
 						 +" DwnSM:" + MyConfig.downModifier
 						 +" NmOre:" + MyConfig.normalOreHandling );

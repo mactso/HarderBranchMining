@@ -9,9 +9,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -61,8 +60,8 @@ public class HarderBranchMiningCommands {
 					ResourceKey<Level> dimensionKey = level.dimension();
 					String dimensionId = dimensionKey.location().toString();
 	
-					RegistryAccess dynreg = serverPlayerEntity.level().getServer().registryAccess();
-					Registry<Item> itemRegistry =  dynreg.registryOrThrow(Registries.ITEM);
+					DefaultedRegistry<Item> itemRegistry = BuiltInRegistries.ITEM;
+					// Registry<Item> itemRegistry =  dynreg.registryOrThrow(Registries.ITEM);
 					ResourceLocation key = itemRegistry.getKey(tempItem);
 					ToolManager.toolItem toolInfo = ToolManager.getToolInfo(key, dimensionId);
 					float depthFactor = (float) Utility.calcDepthFactor(serverPlayerEntity.blockPosition().getY(), toolInfo);

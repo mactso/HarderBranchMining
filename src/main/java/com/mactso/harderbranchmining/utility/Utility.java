@@ -1,16 +1,17 @@
 package com.mactso.harderbranchmining.utility;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mactso.harderbranchmining.config.MyConfig;
 import com.mactso.harderbranchmining.manager.ToolManager.toolItem;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 
 public class Utility {
 	
@@ -41,7 +42,7 @@ public class Utility {
 		return String.format("%5.2f%%", value * 100);
 	}
 	
-	public static void dbgChatln(Player p, String msg, int level) {
+	public static void dbgChatln(ServerPlayer p, String msg, int level) {
 		if (MyConfig.getDebugLevel() > level - 1) {
 			sendChat(p, msg, ChatFormatting.YELLOW);
 		}
@@ -77,25 +78,25 @@ public class Utility {
 
 	}
 
-	public static void sendBoldChat(Player p, String chatMessage, ChatFormatting textColor) {
+	public static void sendBoldChat(ServerPlayer p, String chatMessage, ChatFormatting textColor) {
 
 		MutableComponent component = Component.literal(chatMessage);
 		component.setStyle(component.getStyle().withBold(true));
 		component.setStyle(component.getStyle().withColor(textColor));
-		p.sendSystemMessage(component);
+		p.sendSystemMessage(component, false);
 
 
 	}
 
-	public static void sendChat(Player p, String chatMessage) {
+	public static void sendChat(ServerPlayer p, String chatMessage) {
 		sendChat (p, chatMessage, ChatFormatting.DARK_GREEN);
 	}
 	
-	public static void sendChat(Player p, String chatMessage, ChatFormatting textColor) {
+	public static void sendChat(ServerPlayer p, String chatMessage, ChatFormatting textColor) {
 
 		MutableComponent component = Component.literal(chatMessage);
 		component.setStyle(component.getStyle().withColor(textColor));
-		p.sendSystemMessage(component);
+		p.sendSystemMessage(component, false);
 
 	}
 
