@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber()
@@ -42,7 +42,7 @@ public class BlockBreakHandler {
     	}
     }
 	@SubscribeEvent
-	public void blockBreak(BlockEvent.BreakEvent event) {
+	public static void blockBreak(BlockEvent.BreakEvent event) {
 
 		if (MyConfig.exhaustionType == MyConfig.EXHAUSTION_OFF) {
 			if (MyConfig.debugLevel > 0) {
@@ -78,7 +78,7 @@ public class BlockBreakHandler {
 		// World debugWorldValue = (World) event.getWorld();
 		// ItemStack debugItemStack = event.getPlayer().getHeldItemMainhand();
 		Item tempItem = p.getMainHandItem().getItem();
-
+		ResourceLocation blockDescription = BuiltInRegistries.BLOCK.getKey(event.getState().getBlock());
 		// domain:tool:dimension
 
 		ResourceKey<Level> dimensionKey = p.level().dimension();
@@ -97,6 +97,7 @@ public class BlockBreakHandler {
 		}
 
 		double depthFactor = Utility.calcDepthFactor(event.getPos().getY(), toolInfo);
+		int slowdownFactor = 100 - (int) Math.round(depthFactor*100.0d);
 		double extraExhaustion = toolInfo.getExhaustionAmount();
 
 		if (MyConfig.getExhaustionType() == 0)
@@ -108,14 +109,14 @@ public class BlockBreakHandler {
 		foodData.addExhaustion((float) extraExhaustion);
 
 		if (MyConfig.debugLevel > 0) {
-			System.out.println("Block Broken! Player:" + p.getName().getString().toString() + ", Dimension:"
+			Utility.debugMsg(1,"Block "+ blockDescription +" Broken! Player:" + p.getName().getString().toString() + ", Dimension:"
 					+ dimensionId + ", Pos:" + event.getPos() + ", extraExhaustion:" + extraExhaustion);
 			if (MyConfig.debugLevel > 1) {
 				if (p instanceof ServerPlayer sp) {
-					Utility.sendChat(sp, "\nBlock Broken! with " + BuiltInRegistries.ITEM.getDefaultKey().toString(), ChatFormatting.GOLD);
+					Utility.sendChat(sp, "\nBlock "+ blockDescription +" Broken! Player: " + p.getName().getString().toString() + " with " + BuiltInRegistries.ITEM.getKey(tempItem), ChatFormatting.GOLD);
 					Utility.sendChat(sp,
-							"Dimension   :" + dimensionId + " at Depth       :" + event.getPos().getY()
-									+ "\nExtra Exhaustion:" + Math.round(extraExhaustion * 1000.0) / 1000.0
+							"Dimension   :" + dimensionId + " at altitude     :" + event.getPos().getY()
+							+ "\nExtra Exhaustion:" + Math.round(extraExhaustion * 1000.0) / 1000.0
 									+ "\nSaturation Now: " + foodData.getSaturationLevel() + " Exhaustion Now: "
 									+ getExhaustionLevel(foodData),
 							ChatFormatting.GREEN);
@@ -137,7 +138,7 @@ public class BlockBreakHandler {
 	}
 
 	@SubscribeEvent
-	public void blockBreakSpeed(PlayerEvent.BreakSpeed event) {
+	public static void blockBreakSpeed(PlayerEvent.BreakSpeed event) {
 		double depthFactor = 0.0;
 		String debugWorldName = "server-local ";
 
@@ -208,7 +209,7 @@ public class BlockBreakHandler {
 		}
 	}
 
-	private double calcNewDestroySpeed(PlayerEvent.BreakSpeed event, double depthFactor, Player p,
+	private static double calcNewDestroySpeed(PlayerEvent.BreakSpeed event, double depthFactor, Player p,
 			ToolManager.toolItem toolInfo) {
 
 		double newDestroySpeed = event.getOriginalSpeed();
@@ -223,7 +224,7 @@ public class BlockBreakHandler {
 		return newDestroySpeed;
 	}
 
-	private boolean isSoftBlock(BlockPos pos, BlockState s, Player p) {
+	private static boolean isSoftBlock(BlockPos pos, BlockState s, Player p) {
 
 		double hardness = s.getDestroySpeed(p.level(), pos);
 		// Block debugBlock = event.getState().getBlock();
@@ -233,7 +234,7 @@ public class BlockBreakHandler {
 		return true;
 	}
 
-	private boolean isSkipBlock(String debugWorldName, Player p, Block block) {
+	private static boolean isSkipBlock(String debugWorldName, Player p, Block block) {
 		if (IgnoreBlocksListManager.ignoreBlocksListHashSet.contains(block)) {
 			if (MyConfig.debugLevel > 1) {
 				if (p instanceof ServerPlayer sp) {
@@ -268,7 +269,7 @@ public class BlockBreakHandler {
 		return false;
 	}
 
-	private void chatDebugInfo(PlayerEvent.BreakSpeed event, double depthFactor, Player p, String dimensionId,
+	private static void chatDebugInfo(PlayerEvent.BreakSpeed event, double depthFactor, Player p, String dimensionId,
 			ResourceLocation key, ToolManager.toolItem toolInfo) {
 		Utility.debugMsg(2, p, " ");
 		Utility.debugMsg(2, p,
@@ -294,7 +295,7 @@ public class BlockBreakHandler {
 
 	}
 
-	private void logDebugInfo(PlayerEvent.BreakSpeed event, Block b, double depthFactor, Player p, String dimensionId,
+	private static void logDebugInfo(PlayerEvent.BreakSpeed event, Block b, double depthFactor, Player p, String dimensionId,
 			ResourceLocation toolkey, ToolManager.toolItem toolInfo) {
 		Utility.debugMsg(1, "\nMining " + BuiltInRegistries.BLOCK.getKey(b).getPath() + " with " +
 				toolkey.getPath() +" at " 
