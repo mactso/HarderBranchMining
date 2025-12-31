@@ -1,10 +1,10 @@
-package com.mactso.harderbranchmining.utility;
+package com.mactso.harderbranchmining.common.utilities;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mactso.harderbranchmining.config.MyConfig;
-import com.mactso.harderbranchmining.manager.ToolManager.toolItem;
+import com.mactso.harderbranchmining.common.managers.ToolManager.toolItem;
+import com.mactso.harderbranchmining.modloader.config.MyConfig;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -13,11 +13,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
-public class Utility {
+public class MyUtilities {
 	
 	private static final Logger LOGGER = LogManager.getLogger();
 	
-	public static double calcDepthFactor(int eventY, toolItem toolInfo) {
+	public static double calcDepthFactor(toolItem toolInfo, int eventY ) {
 		double depthFactor;
 
 		if (eventY > toolInfo.getYModifierStart()) {

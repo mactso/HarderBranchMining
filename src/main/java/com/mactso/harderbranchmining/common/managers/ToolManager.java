@@ -1,5 +1,5 @@
 //1.15.2-2.0
-package com.mactso.harderbranchmining.manager;
+package com.mactso.harderbranchmining.common.managers;
 
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mactso.harderbranchmining.config.MyConfig;
+import com.mactso.harderbranchmining.modloader.config.MyConfig;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -64,10 +64,16 @@ public class ToolManager {
 	private static String defaultToolKey = defaultToolString + ":" + defaultToolDimensionID;
 
 
-	public static toolItem getToolInfo(ResourceLocation key, String dimensionID) {
+	public static toolItem getToolInfoOrDefault(ResourceLocation key, String dimensionID) {
+
 
 		if (toolHashtable.isEmpty()) {
 			initTools();
+		}
+
+		if (key == null) {
+			return toolHashtable.get(defaultToolKey);
+			
 		}
 
 		String nameSpace = key.getNamespace();
@@ -152,7 +158,7 @@ public class ToolManager {
 			i++;
 		}
 
-		if (getToolInfo(defaultToolString, defaultToolDimensionID) == null) {
+		if (getToolInfoOrDefault(defaultToolString, defaultToolDimensionID) == null) {
 
 			toolHashtable.put(defaultToolKey, new toolItem(48, 0, 16, 60));
 		}

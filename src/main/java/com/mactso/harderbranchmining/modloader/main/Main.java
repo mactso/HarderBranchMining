@@ -1,13 +1,11 @@
 
-package com.mactso.harderbranchmining;
+package com.mactso.harderbranchmining.modloader.main;
 
-import com.mactso.harderbranchmining.commands.HarderBranchMiningCommands;
-import com.mactso.harderbranchmining.config.MyConfig;
-import com.mactso.harderbranchmining.event.BlockBreakHandler;
-import com.mactso.harderbranchmining.manager.ToolManager;
-import com.mactso.harderbranchmining.utility.Utility;
+import com.mactso.harderbranchmining.common.commands.HarderBranchMiningCommands;
+import com.mactso.harderbranchmining.common.managers.ToolManager;
+import com.mactso.harderbranchmining.common.utilities.MyUtilities;
+import com.mactso.harderbranchmining.modloader.config.MyConfig;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -26,33 +24,25 @@ public class Main
 	{
 		context.registerConfig(ModConfig.Type.COMMON, MyConfig.COMMON_SPEC);
         FMLCommonSetupEvent.getBus(context.getModBusGroup()).addListener(this::handleCommonSetup);
-    	Utility.debugMsg(0,MODID + ": Registering Mod.");
+    	MyUtilities.debugMsg(0,MODID + ": Registering Mod.");
 	}
 	
 	public void handleCommonSetup (final FMLCommonSetupEvent event) {
 		// nothing happens in here any more.
 	}
 
-    // Register ourselves for server and other game events we are interested in
-	@SubscribeEvent 
-	public void preInit (final FMLCommonSetupEvent event) {
-		Utility.debugMsg(0,"HarderBranchMining: Registering Handler");
-		MinecraftForge.EVENT_BUS.register(new BlockBreakHandler ());
-		
-	}
-
-    @Mod.EventBusSubscriber()
+      @Mod.EventBusSubscriber(modid = "harderbranchmining")
     public static class ForgeEvents
     {
 		@SubscribeEvent 		
 		public static void onCommandsRegistry(final RegisterCommandsEvent event) {
-			Utility.debugMsg(0,"HarderBranchMining: Registering Commands");
+			MyUtilities.debugMsg(0,"HarderBranchMining: Registering Commands");
 			HarderBranchMiningCommands.register(event.getDispatcher());			
 		}
 
 		@SubscribeEvent 
 		public static void onServerStarting (ServerStartingEvent event) {
-			Utility.debugMsg(0,"HarderBranchMining: Initializing Toolmanager");
+			MyUtilities.debugMsg(0,"HarderBranchMining: Initializing Toolmanager");
 			ToolManager.initTools();
 		}
     }

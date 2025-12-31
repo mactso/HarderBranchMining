@@ -1,25 +1,26 @@
 modLoader="javafml"
-loaderVersion="[56,)"
-license="MIT License"
+loaderVersion="[59,)"
+license="MIT"
+
 [[mods]]
 modId="harderbranchmining"
-version="${file.jarVersion}"
+version="59.1.1"
 displayName="Harder Branch Mining Mod"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/harder-branch-mining"
-updateJSONURL="https://github.com/mactso/HarderBranchMining/raw/main/update.json"
+displayTest="IGNORE_SERVER_VERSION"
 logoFile="HBM-Logo.png"
 authors="MacTso, Lupicus"
 description='Harder Branch Mining Mod.'
 [[dependencies.harderbranchmining]]
-    modId="forge"
-    mandatory=true
-    versionRange="[56,)"
-    ordering="NONE"
-    side="BOTH"
+modId="forge"
+mandatory=true
+versionRange="[59,)"
+ordering="NONE"
+side="BOTH"
 
 [[dependencies.harderbranchmining]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.21.6,1.22)"
-    ordering="NONE"
-    side="BOTH"
+modId="minecraft"
+mandatory=true
+versionRange="[1.21.9,1.22)"
+ordering="NONE"
+side="BOTH"

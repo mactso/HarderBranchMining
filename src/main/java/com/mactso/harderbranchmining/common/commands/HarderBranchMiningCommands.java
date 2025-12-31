@@ -1,8 +1,8 @@
-package com.mactso.harderbranchmining.commands;
+package com.mactso.harderbranchmining.common.commands;
 
-import com.mactso.harderbranchmining.config.MyConfig;
-import com.mactso.harderbranchmining.manager.ToolManager;
-import com.mactso.harderbranchmining.utility.Utility;
+import com.mactso.harderbranchmining.common.managers.ToolManager;
+import com.mactso.harderbranchmining.common.utilities.MyUtilities;
+import com.mactso.harderbranchmining.modloader.config.MyConfig;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 
@@ -63,11 +63,11 @@ public class HarderBranchMiningCommands {
 					DefaultedRegistry<Item> itemRegistry = BuiltInRegistries.ITEM;
 					// Registry<Item> itemRegistry =  dynreg.registryOrThrow(Registries.ITEM);
 					ResourceLocation key = itemRegistry.getKey(tempItem);
-					ToolManager.toolItem toolInfo = ToolManager.getToolInfo(key, dimensionId);
-					float depthFactor = (float) Utility.calcDepthFactor(serverPlayerEntity.blockPosition().getY(), toolInfo);
+					ToolManager.toolItem toolInfo = ToolManager.getToolInfoOrDefault(key, dimensionId);
+					float depthFactor = (float) MyUtilities.calcDepthFactor(toolInfo, serverPlayerEntity.blockPosition().getY() );
 					if (depthFactor == -1) depthFactor = 0;
 					String chatMessage = "\n HarderBranchMining Info";
-					Utility.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN);
+					MyUtilities.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN);
 		            chatMessage = 
   	            		    "  Debug Level...................: " + MyConfig.getDebugLevel()
 		            		+ "\n  Exhaustion Type........: " + MyConfig.getExhaustionTypeAsString() + "(" +MyConfig.getExhaustionType() + ")"
@@ -77,11 +77,11 @@ public class HarderBranchMiningCommands {
 		            	    + " -> Player Y: " + serverPlayerEntity.blockPosition().getY()
 		            	    + " -> Tool Bottom Y : " + toolInfo.getYModifierStop()
 		            		+ "\n  Tool Dig Modifier........: " + toolInfo.getDigModifierAsPercent() +" * " + 
-		            	    Utility.formatPercentage(depthFactor) + " = " + Utility.formatPercentage((float)(depthFactor*toolInfo.getDigModifier())) + " slower."
+		            	    MyUtilities.formatPercentage(depthFactor) + " = " + MyUtilities.formatPercentage((float)(depthFactor*toolInfo.getDigModifier())) + " slower."
 		            		+ "\n  Tool Exhaustion..........: " + toolInfo.getExhaustionAmount()+" * " + 
-		            	    Utility.formatPercentage(depthFactor)+ " = " + (float)(depthFactor*toolInfo.getExhaustionAmount()) + " extra exhaustion.";
+		            	    MyUtilities.formatPercentage(depthFactor)+ " = " + (float)(depthFactor*toolInfo.getExhaustionAmount()) + " extra exhaustion.";
 		            		;
-					Utility.sendChat(serverPlayerEntity, chatMessage);
+					MyUtilities.sendChat(serverPlayerEntity, chatMessage);
 		            return 1;
 			}
 			)
