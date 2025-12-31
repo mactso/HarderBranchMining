@@ -9,25 +9,26 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.DefaultedRegistry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
 public class HarderBranchMiningCommands {
-	String subcommand = "";
-	String value = "";
+	
+	private static final String MOD_VERSION = "1.21.11 v1.1 Harder Branch Mining CC Forge ";
 	
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
-		dispatcher.register(Commands.literal("harderbranchmining").requires((source) -> 
-			{
-				return source.hasPermission(2);
-			}
-		)
+		dispatcher.register(
+	    Commands.literal("harderbranchmining")
+        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 		.then(Commands.literal("downSpeed").then(
 				Commands.argument("downSpeed", IntegerArgumentType.integer(0,100)).executes(ctx -> {
 					return setDownSpeed (IntegerArgumentType.getInteger(ctx, "downSpeed"));
@@ -37,13 +38,15 @@ public class HarderBranchMiningCommands {
 			)
 			)
 		.then(Commands.literal("debugLevel").then(
-				Commands.argument("debugLevel", IntegerArgumentType.integer(0,2)).executes(ctx -> {
-					return setDebugLevel(IntegerArgumentType.getInteger(ctx, "debugLevel"));
-					// return 1;
-			}
-			)
-			)
-			)
+			    Commands.argument("level", IntegerArgumentType.integer(0, 2))
+			        .executes(ctx -> setDebugLevel(IntegerArgumentType.getInteger(ctx, "level")))
+			        .suggests((context, builder) -> {
+			            builder.suggest("0 - None");
+			            builder.suggest("1 - Some");
+			            builder.suggest("2 - All");
+			            return builder.buildFuture();
+			        })
+			))
 		.then(Commands.literal("exhaustionType").then(
 				Commands.argument("exhaustionType", IntegerArgumentType.integer(0,1)).executes(ctx -> {
 					return setExhaustionType(IntegerArgumentType.getInteger(ctx, "exhaustionType"));
@@ -53,27 +56,32 @@ public class HarderBranchMiningCommands {
 			)
 			)
 		.then(Commands.literal("info").executes(ctx -> {
-					ServerPlayer serverPlayerEntity = (ServerPlayer) ctx.getSource().getEntity();
-					Level level = serverPlayerEntity.level();
+			if (!(ctx.getSource().getEntity() instanceof ServerPlayer serverPlayerEntity)) {
+			    ctx.getSource().sendFailure(Component.literal("Player only command"));
+			    return 0;
+			}
+
+					ServerLevel serverLevel = serverPlayerEntity.level();
 					Item tempItem = serverPlayerEntity.getMainHandItem().getItem();
+					RegistryAccess registryAccess = serverLevel.registryAccess();
+					Registry<Item> itemRegistry = registryAccess.lookupOrThrow(Registries.ITEM);
+					Identifier itemID = itemRegistry.getKey(tempItem);
 					
-					ResourceKey<Level> dimensionKey = level.dimension();
-					String dimensionId = dimensionKey.location().toString();
+					ResourceKey<Level> dimensionKey = serverLevel.dimension();
+					String dimensionId = dimensionKey.identifier().toString();
 	
-					DefaultedRegistry<Item> itemRegistry = BuiltInRegistries.ITEM;
-					// Registry<Item> itemRegistry =  dynreg.registryOrThrow(Registries.ITEM);
-					ResourceLocation key = itemRegistry.getKey(tempItem);
-					ToolManager.toolItem toolInfo = ToolManager.getToolInfoOrDefault(key, dimensionId);
+					String toolName = itemID.toString();
+					ToolManager.toolItem toolInfo = ToolManager.getToolInfoOrDefault(itemID, dimensionId);
 					float depthFactor = (float) MyUtilities.calcDepthFactor(toolInfo, serverPlayerEntity.blockPosition().getY() );
-					if (depthFactor == -1) depthFactor = 0;
-					String chatMessage = "\n HarderBranchMining Info";
+					if (depthFactor == -1) depthFactor = 0; // error "above Y where tool modifier starts"
+					String chatMessage = "\n"+MOD_VERSION+" Info";
 					MyUtilities.sendChat(serverPlayerEntity, chatMessage, ChatFormatting.DARK_GREEN);
 		            chatMessage = 
-  	            		    "  Debug Level...................: " + MyConfig.getDebugLevel()
-		            		+ "\n  Exhaustion Type........: " + MyConfig.getExhaustionTypeAsString() + "(" +MyConfig.getExhaustionType() + ")"
-		            		+ "\n  Extra Down Modifier: " + MyConfig.getDownModifierAsString()
-		            		+ "\n  Dimension..........................: " + dimensionId
-		            		+ "\n  Tool Top Y.......................: " + toolInfo.getYModifierStart()
+  	            		    "  Debug Level : " + MyConfig.getDebugLevel()
+		            		+ "\n  Exhaustion Type : " + MyConfig.getExhaustionTypeAsString() + "(" +MyConfig.getExhaustionType() + ")"
+		            		+ "\n  Extra Down Modifier : " + MyConfig.getDownModifierAsString()
+		            		+ "\n  Dimension : " + dimensionId
+		            		+ "\n  Tool + "+toolName+":\n    Top Y : " + toolInfo.getYModifierStart()
 		            	    + " -> Player Y: " + serverPlayerEntity.blockPosition().getY()
 		            	    + " -> Tool Bottom Y : " + toolInfo.getYModifierStop()
 		            		+ "\n  Tool Dig Modifier........: " + toolInfo.getDigModifierAsPercent() +" * " + 
@@ -85,9 +93,8 @@ public class HarderBranchMiningCommands {
 		            return 1;
 			}
 			)
-			)		
-		);
-
+			)
+		);		
 	}
 	
 	public static int setDownSpeed (int newDownSpeed) {

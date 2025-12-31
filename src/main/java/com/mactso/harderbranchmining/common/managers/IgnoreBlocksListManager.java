@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mactso.harderbranchmining.modloader.config.MyConfig;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -26,7 +26,7 @@ public class IgnoreBlocksListManager {
 		while (i < MyConfig.ignoreBlocksStringArray.length) {
 			try {
 				String key = MyConfig.ignoreBlocksStringArray[i];
-				Block ignoreBlock = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(key) );
+				Block ignoreBlock = ForgeRegistries.BLOCKS.getValue(Identifier.parse(key) );
 				if ((ignoreBlock != null) && (!(ignoreBlock instanceof AirBlock))) {
 					ignoreBlocksListHashSet.add(ignoreBlock);
 				} else {

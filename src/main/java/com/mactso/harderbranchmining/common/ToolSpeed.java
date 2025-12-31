@@ -6,8 +6,8 @@ import com.mactso.harderbranchmining.modloader.config.MyConfig;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -61,10 +61,10 @@ public class ToolSpeed {
 		}
 
 		ResourceKey<Level> dimensionKey = player.level().dimension();
-		String dimensionId = dimensionKey.location().toString();
+		String dimensionId = dimensionKey.identifier().toString();
 
 		@SuppressWarnings("deprecation")
-		ResourceLocation itemKey = playerItem.builtInRegistryHolder().key().location();
+		Identifier itemKey = playerItem.builtInRegistryHolder().key().identifier();
 
 		ToolManager.toolItem toolInfo = ToolManager.getToolInfoOrDefault(itemKey, dimensionId);
 
@@ -120,7 +120,7 @@ public class ToolSpeed {
 	}
 
 	private static void chatDebugInfo(Player p, PlayerEvent.BreakSpeed event, double depthFactor, String dimensionId,
-			ResourceLocation key, ToolManager.toolItem toolInfo) {
+			Identifier key, ToolManager.toolItem toolInfo) {
 		MyUtilities.debugMsg(2, p, " ");
 		MyUtilities.debugMsg(2, p,
 				key.toString() + ":" + dimensionId + " \nExtra Exhaustion:" + toolInfo.getExhaustionAmount() + " ");
@@ -146,7 +146,7 @@ public class ToolSpeed {
 	}
 
 	private static void logDebugInfo(Player p, PlayerEvent.BreakSpeed event, Block b, double depthFactor,
-			String dimensionId, ResourceLocation toolkey, ToolManager.toolItem toolInfo) {
+			String dimensionId, Identifier toolkey, ToolManager.toolItem toolInfo) {
 		MyUtilities.debugMsg(1, "\nMining " + BuiltInRegistries.BLOCK.getKey(b).getPath() + " with " + toolkey.getPath()
 				+ " at " + " ( x=" + event.getPosition().get().getX() + ", y=" + event.getPosition().get().getY()
 				+ ", z=" + event.getPosition().get().getZ() + ") " + " in the " + dimensionId + "\n" + toolkey.getPath()

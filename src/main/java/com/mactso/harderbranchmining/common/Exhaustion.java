@@ -2,6 +2,8 @@ package com.mactso.harderbranchmining.common;
 
 import java.lang.reflect.Field;
 
+import org.jspecify.annotations.Nullable;
+
 import com.mactso.harderbranchmining.common.managers.ToolManager;
 import com.mactso.harderbranchmining.common.utilities.MyUtilities;
 import com.mactso.harderbranchmining.modloader.config.MyConfig;
@@ -11,8 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.food.FoodData;
@@ -57,7 +59,7 @@ public class Exhaustion {
 		}
 
 		ResourceKey<Level> dimensionKey = level.dimension();
-		String dimensionId = dimensionKey.location().toString();
+		String dimensionId = dimensionKey.identifier().toString();
 		FoodData foodData = player.getFoodData();
 		RegistryAccess registryAccess = level.registryAccess();
 		Registry<Block> blockRegistry = registryAccess.lookupOrThrow(Registries.BLOCK);
@@ -68,7 +70,8 @@ public class Exhaustion {
 		// ---- tool + block context ----
 		ItemStack toolStack = player.getMainHandItem();
 		Item toolInMainHand = toolStack.getItem();
-		ResourceLocation toolKey = itemRegistry.getKey(toolInMainHand);
+		 @Nullable
+		Identifier toolKey = itemRegistry.getKey(toolInMainHand);
 		
 		ToolManager.toolItem toolInfo = ToolManager.getToolInfoOrDefault(toolKey, dimensionId);
 
@@ -108,9 +111,9 @@ public class Exhaustion {
 	}
 	
 	private static void exhaustionDebugHelper(ServerPlayer player, BlockState targetBlockState, BlockPos pos,
-			String dimensionId, FoodData foodData, Registry<Block> blockRegistry, ResourceLocation toolKey,
+			String dimensionId, FoodData foodData, Registry<Block> blockRegistry, Identifier toolKey,
 			double addedExhaustion) {
-		ResourceLocation blockRL = blockRegistry.getKey(targetBlockState.getBlock());
+		Identifier blockRL = blockRegistry.getKey(targetBlockState.getBlock());
 		MyUtilities.debugMsg(1,
 				"Block " + blockRL + " Broken! Player:" + player.getName().getString()
 						+ ", Dimension:" + dimensionId + ", Pos:" + pos + ", addedExhaustion:" + addedExhaustion);

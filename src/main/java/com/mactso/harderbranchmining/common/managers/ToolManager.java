@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mactso.harderbranchmining.modloader.config.MyConfig;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ToolManager {
@@ -58,13 +58,13 @@ public class ToolManager {
 
 	}
 	public static Hashtable<String, toolItem> toolHashtable = new Hashtable<>();
-	private static final ResourceLocation defaultToolString = ResourceLocation.parse("hbm:default");
+	private static final Identifier defaultToolString = Identifier.parse("hbm:default");
 	private static final String defaultToolDimensionID = "hbm:default_dimension"; // OVERWORLD
 
 	private static String defaultToolKey = defaultToolString + ":" + defaultToolDimensionID;
 
 
-	public static toolItem getToolInfoOrDefault(ResourceLocation key, String dimensionID) {
+	public static toolItem getToolInfoOrDefault(Identifier key, String dimensionID) {
 
 
 		if (toolHashtable.isEmpty()) {
@@ -148,7 +148,7 @@ public class ToolManager {
 				toolHashtable.put(key, new toolItem(toolYModifierStart, toolYModifierStop, tExhaustionAmt, tDigModifier));
 				if (!modAndTool.contentEquals("hbm:default1") &&
 				    !modAndTool.endsWith(":*") &&
-				    !ForgeRegistries.ITEMS.containsKey(ResourceLocation.parse(modAndTool))
+				    !ForgeRegistries.ITEMS.containsKey(Identifier.parse(modAndTool))
 				   )  {
 					LOGGER.warn("HarderBranchMining: Tool: " + modAndTool + " not in Forge Registry.  Mispelled?");
 				}
